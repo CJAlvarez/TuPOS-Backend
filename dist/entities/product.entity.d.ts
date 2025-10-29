@@ -1,0 +1,51 @@
+import { Model } from 'sequelize-typescript';
+import { SaleItem } from './sale-item.entity';
+import { Inventory } from './inventory.entity';
+export declare class Product extends Model<Product> {
+    saleItems: SaleItem[];
+    inventorys: Inventory[];
+    id: number;
+    id_store: number;
+    name: string;
+    code: string;
+    description: string;
+    content: string;
+    category: string;
+    id_type: number;
+    loyalty_eligible: number;
+    min_stock: number;
+    tax_percent: number;
+    unit_price: number;
+    unit_discount_percent: number;
+    unit_discount: number;
+    id_unit_discount_type: number;
+    box_price: number;
+    box_discount_percent: number;
+    box_discount: number;
+    id_box_discount_type: number;
+    box_amount: number;
+    created_by: number;
+    created_at: Date;
+    updated_at: Date;
+    disabled_at?: Date | null;
+    disabled_by?: number | null;
+    deleted_at?: Date | null;
+    deleted_by?: number | null;
+}
+export interface ProductCreationAttributes {
+    id_type: number;
+    name: string;
+    barcode: string;
+    description?: string;
+    box_price: number;
+    unit_price: number;
+    unit_discount_percent?: number;
+    unit_discount?: number;
+    box_discount_percent?: number;
+    box_discount?: number;
+    tax_percent?: number;
+    min_stock?: number;
+    box_amount: number;
+    loyalty_eligible: number;
+    created_by: number;
+}

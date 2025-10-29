@@ -1,0 +1,15 @@
+# Changelog - TuPOS Admin
+En este archivo se documentan los cambios más relevantes del proyecto TuPOS Admin Backend. Los registros están redactados para personas; la entrada más reciente aparece primero.
+
+El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) y el proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
+
+Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
+
+## [v2.0.2] 2025-10-26
+### Added
+- Reconstrucción del Sistema
+
+## [v2.0.1] 2025-10-25
+### Added
+- Reconstrucción del Sistema
