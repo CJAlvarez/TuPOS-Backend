@@ -13,9 +13,11 @@ exports.Admin = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const user_entity_1 = require("./user.entity");
 const profile_entity_1 = require("./profile.entity");
+const store_entity_1 = require("./store.entity");
 let Admin = class Admin extends sequelize_typescript_1.Model {
     profile;
     user;
+    store;
     id_user;
     id_store;
     id_admin_type;
@@ -34,10 +36,15 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], Admin.prototype, "user", void 0);
 __decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => store_entity_1.Store, { foreignKey: 'id_store', targetKey: 'id' }),
+    __metadata("design:type", store_entity_1.Store)
+], Admin.prototype, "store", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, primaryKey: true }),
     __metadata("design:type", Number)
 ], Admin.prototype, "id_user", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => store_entity_1.Store),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true }),
     __metadata("design:type", Number)
 ], Admin.prototype, "id_store", void 0);

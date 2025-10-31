@@ -9,6 +9,7 @@ export declare class Store extends Model<Store> {
     id_loyalty_type: number;
     loyalty_value: number;
     tax_included: number;
+    theme_config: any;
     created_by: number;
     created_at: Date;
     updated_at: Date;

@@ -1,6 +1,7 @@
 import { Model } from 'sequelize-typescript';
 import { User } from './user.entity';
 import { Profile } from './profile.entity';
+import { Store } from './store.entity';
 export interface AdminCreationAttributes {
     id_user: number;
     id_admin_type: number;
@@ -8,6 +9,7 @@ export interface AdminCreationAttributes {
 export declare class Admin extends Model<Admin, AdminCreationAttributes> {
     profile?: Profile;
     user?: User;
+    store?: Store;
     id_user: number;
     id_store: number;
     id_admin_type: number;

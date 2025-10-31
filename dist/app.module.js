@@ -29,6 +29,7 @@ const users_module_1 = require("./users/users.module");
 const products_module_1 = require("./products/products.module");
 const client_entity_1 = require("./entities/client.entity");
 const admin_entity_1 = require("./entities/admin.entity");
+const store_entity_1 = require("./entities/store.entity");
 const jobs_module_1 = require("./jobs/jobs.module");
 const reports_module_1 = require("./reports/reports.module");
 const report_entity_1 = require("./entities/report.entity");
@@ -69,7 +70,7 @@ exports.AppModule = AppModule = __decorate([
                     database: configService.get('DB_SCHEMA'),
                     autoLoadModels: true,
                     synchronize: true,
-                    models: [user_entity_1.User, profile_entity_1.Profile, client_entity_1.Client, admin_entity_1.Admin, report_entity_1.Report],
+                    models: [user_entity_1.User, profile_entity_1.Profile, client_entity_1.Client, admin_entity_1.Admin, store_entity_1.Store, report_entity_1.Report],
                     timezone: '-06:00',
                     logging: configService.get('DB_LOGGING', false)
                         ? console.log

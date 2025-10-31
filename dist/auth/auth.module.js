@@ -20,13 +20,14 @@ const profile_entity_1 = require("../entities/profile.entity");
 const admin_entity_1 = require("../entities/admin.entity");
 const client_entity_1 = require("../entities/client.entity");
 const jobs_module_1 = require("../jobs/jobs.module");
+const store_entity_1 = require("../entities/store.entity");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            sequelize_1.SequelizeModule.forFeature([user_entity_1.User, profile_entity_1.Profile, admin_entity_1.Admin, client_entity_1.Client]),
+            sequelize_1.SequelizeModule.forFeature([user_entity_1.User, profile_entity_1.Profile, admin_entity_1.Admin, client_entity_1.Client, store_entity_1.Store]),
             passport_1.PassportModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],

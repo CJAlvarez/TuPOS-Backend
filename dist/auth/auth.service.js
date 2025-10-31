@@ -18,6 +18,8 @@ const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_entity_1 = require("../entities/user.entity");
 const profile_entity_1 = require("../entities/profile.entity");
+const admin_entity_1 = require("../entities/admin.entity");
+const store_entity_1 = require("../entities/store.entity");
 const bcrypt = require("bcrypt");
 const sequelize_2 = require("sequelize");
 const jobs_service_1 = require("../jobs/jobs.service");
@@ -25,11 +27,15 @@ let AuthService = class AuthService {
     jwtService;
     userModel;
     profileModel;
+    adminModel;
+    storeModel;
     jobsService;
-    constructor(jwtService, userModel, profileModel, jobsService) {
+    constructor(jwtService, userModel, profileModel, adminModel, storeModel, jobsService) {
         this.jwtService = jwtService;
         this.userModel = userModel;
         this.profileModel = profileModel;
+        this.adminModel = adminModel;
+        this.storeModel = storeModel;
         this.jobsService = jobsService;
     }
     async getUserData(id_user) {
@@ -41,14 +47,27 @@ let AuthService = class AuthService {
                     model: profile_entity_1.Profile,
                     as: 'profile',
                 },
+                {
+                    model: admin_entity_1.Admin,
+                    as: 'admin',
+                    include: [
+                        {
+                            model: store_entity_1.Store,
+                            as: 'store',
+                            attributes: ['id', 'name', 'code', 'theme_config'],
+                        },
+                    ],
+                },
             ],
         }))?.toJSON();
         if (!user)
             throw new common_1.NotFoundException('Usuario inexistente');
+        const storeData = user.admin?.store || null;
         const result = {
             username: user.username,
             email: user.email,
             ...user.profile,
+            store: storeData,
         };
         return result;
     }
@@ -211,6 +230,8 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, sequelize_1.InjectModel)(user_entity_1.User)),
     __param(2, (0, sequelize_1.InjectModel)(profile_entity_1.Profile)),
-    __metadata("design:paramtypes", [jwt_1.JwtService, Object, Object, jobs_service_1.JobsService])
+    __param(3, (0, sequelize_1.InjectModel)(admin_entity_1.Admin)),
+    __param(4, (0, sequelize_1.InjectModel)(store_entity_1.Store)),
+    __metadata("design:paramtypes", [jwt_1.JwtService, Object, Object, Object, Object, jobs_service_1.JobsService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

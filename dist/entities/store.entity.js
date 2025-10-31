@@ -20,6 +20,7 @@ let Store = class Store extends sequelize_typescript_1.Model {
     id_loyalty_type;
     loyalty_value;
     tax_included;
+    theme_config;
     created_by;
     created_at;
     updated_at;
@@ -67,6 +68,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true, defaultValue: 1 }),
     __metadata("design:type", Number)
 ], Store.prototype, "tax_included", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.JSON, allowNull: true }),
+    __metadata("design:type", Object)
+], Store.prototype, "theme_config", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
     __metadata("design:type", Number)

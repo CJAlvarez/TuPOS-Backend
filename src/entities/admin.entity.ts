@@ -5,10 +5,11 @@ import {
   DataType,
   BelongsTo,
   HasOne,
+  ForeignKey,
 } from 'sequelize-typescript';
-import { Optional } from 'sequelize';
 import { User } from './user.entity';
 import { Profile } from './profile.entity';
+import { Store } from './store.entity';
 
 export interface AdminCreationAttributes {
   id_user: number;
@@ -23,9 +24,13 @@ export class Admin extends Model<Admin, AdminCreationAttributes> {
   @BelongsTo(() => User, 'id_user')
   user?: User;
 
+  @BelongsTo(() => Store, { foreignKey: 'id_store', targetKey: 'id' })
+  store?: Store;
+
   @Column({ type: DataType.INTEGER, primaryKey: true })
   id_user: number;
 
+  @ForeignKey(() => Store)
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_store: number;
 

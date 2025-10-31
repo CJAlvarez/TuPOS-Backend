@@ -21,6 +21,7 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { Client } from './entities/client.entity';
 import { Admin } from './entities/admin.entity';
+import { Store } from './entities/store.entity';
 import { JobsModule } from './jobs/jobs.module';
 import { ReportsModule } from './reports/reports.module';
 import { Report } from './entities/report.entity';
@@ -58,7 +59,7 @@ import { StoreModule } from './store/store.module';
         database: configService.get<string>('DB_SCHEMA'),
         autoLoadModels: true,
         synchronize: true, // Cambia a true solo en desarrollo
-        models: [User, Profile, Client, Admin, Report],
+        models: [User, Profile, Client, Admin, Store, Report],
         timezone: '-06:00',
         logging: configService.get<boolean>('DB_LOGGING', false)
           ? console.log

@@ -9,7 +9,6 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { User } from './user.entity';
-import { Optional } from 'sequelize';
 import { Client } from './client.entity';
 import { Admin } from './admin.entity';
 
@@ -39,7 +38,7 @@ export class Profile extends Model<Profile, ProfileCreationAttributes> {
 
   @BelongsTo(() => User, 'id_user')
   user?: User;
-  
+
   @BelongsTo(() => Client, 'id_user')
   client?: Client;
 

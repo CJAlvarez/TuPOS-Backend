@@ -21,6 +21,7 @@ class CreateStoreDto {
     id_loyalty_type;
     loyalty_value;
     tax_included;
+    theme_config;
     created_by;
 }
 exports.CreateStoreDto = CreateStoreDto;
@@ -64,6 +65,25 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateStoreDto.prototype, "tax_included", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Theme configuration for white label stores',
+        example: {
+            name: 'default',
+            colors: {
+                primary: '#26547C',
+                secondary: '#007a9d',
+                success: '#1abc9c',
+                danger: '#f1556c',
+                warning: '#ffcf00',
+                info: '#37cde6'
+            }
+        }
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsObject)(),
+    __metadata("design:type", Object)
+], CreateStoreDto.prototype, "theme_config", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsOptional)(),

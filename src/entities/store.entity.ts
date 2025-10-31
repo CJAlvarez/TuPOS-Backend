@@ -45,6 +45,9 @@ export class Store extends Model<Store> {
   @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 1 })
   tax_included: number;
 
+  @Column({ type: DataType.JSON, allowNull: true })
+  theme_config: any;
+
   @Column({ type: DataType.INTEGER, allowNull: false })
   created_by: number;
 

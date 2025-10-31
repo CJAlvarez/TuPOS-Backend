@@ -12,10 +12,11 @@ import { Profile } from 'src/entities/profile.entity';
 import { Admin } from 'src/entities/admin.entity';
 import { Client } from 'src/entities/client.entity';
 import { JobsModule } from 'src/jobs/jobs.module';
+import { Store } from 'src/entities/store.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, Profile, Admin, Client]),
+    SequelizeModule.forFeature([User, Profile, Admin, Client, Store]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

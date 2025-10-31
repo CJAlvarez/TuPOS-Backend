@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../entities/user.entity';
 import { Profile } from '../entities/profile.entity';
+import { Admin } from '../entities/admin.entity';
+import { Store } from '../entities/store.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -24,6 +26,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Profile) private readonly profileModel: typeof Profile,
+    @InjectModel(Admin) private readonly adminModel: typeof Admin,
+    @InjectModel(Store) private readonly storeModel: typeof Store,
     private readonly jobsService: JobsService,
   ) {}
   async getUserData(id_user: number): Promise<any> {
@@ -36,14 +40,30 @@ export class AuthService {
             model: Profile,
             as: 'profile',
           },
+          {
+            model: Admin,
+            as: 'admin',
+            include: [
+              {
+                model: Store,
+                as: 'store',
+                attributes: ['id', 'name', 'code', 'theme_config'],
+              },
+            ],
+          },
         ],
       })
     )?.toJSON();
     if (!user) throw new NotFoundException('Usuario inexistente');
+
+    // Extract store information if admin exists
+    const storeData = user.admin?.store || null;
+
     const result = {
       username: user.username,
       email: user.email,
       ...user.profile,
+      store: storeData,
     };
     return result;
   }
