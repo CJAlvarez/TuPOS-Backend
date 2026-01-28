@@ -57,7 +57,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: path.resolve(__dirname, '..', '.env'),
+                envFilePath: path.resolve(__dirname, '.env'),
             }),
             sequelize_1.SequelizeModule.forRootAsync({
                 imports: [config_1.ConfigModule],

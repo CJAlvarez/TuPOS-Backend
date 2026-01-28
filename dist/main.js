@@ -58,7 +58,7 @@ async function bootstrap() {
         .addTag('email', 'Envío de correos')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('doc', app, document);
+    swagger_1.SwaggerModule.setup('ULMXYusjhyJhN7nhZc7DrijCMwzztL9rdTP64k2Rppj3vqHbz3ZaecvZP9YosM3FnznRF7i7ZfJJaZrUiKJN3ompHgR4NvCk9PXG', app, document);
     await app.listen(process.env.PORT ?? 8000);
 }
 bootstrap();
