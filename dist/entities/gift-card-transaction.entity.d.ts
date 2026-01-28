@@ -4,7 +4,7 @@ export declare class GiftCardTransaction extends Model<GiftCardTransaction> {
     id_store: number;
     id_gift_card: number;
     id_sale: number;
-    id_type: number;
+    id_type?: number;
     amount: number;
     created_by: number;
     created_at: Date;

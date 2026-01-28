@@ -12,11 +12,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerifyAdminAdminGuard = void 0;
+exports.VerifyAdminStandardGuard = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const admin_entity_1 = require("../../entities/admin.entity");
-let VerifyAdminAdminGuard = class VerifyAdminAdminGuard {
+let VerifyAdminStandardGuard = class VerifyAdminStandardGuard {
     adminModel;
     constructor(adminModel) {
         this.adminModel = adminModel;
@@ -27,6 +27,7 @@ let VerifyAdminAdminGuard = class VerifyAdminAdminGuard {
         const admin = await this.adminModel.findOne({
             where: {
                 id_user: internal_user_id,
+                id_admin_type: 2,
             },
         });
         if (!admin) {
@@ -41,10 +42,10 @@ let VerifyAdminAdminGuard = class VerifyAdminAdminGuard {
         return true;
     }
 };
-exports.VerifyAdminAdminGuard = VerifyAdminAdminGuard;
-exports.VerifyAdminAdminGuard = VerifyAdminAdminGuard = __decorate([
+exports.VerifyAdminStandardGuard = VerifyAdminStandardGuard;
+exports.VerifyAdminStandardGuard = VerifyAdminStandardGuard = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(admin_entity_1.Admin)),
     __metadata("design:paramtypes", [Object])
-], VerifyAdminAdminGuard);
-//# sourceMappingURL=verify-admin-admin.guard.js.map
+], VerifyAdminStandardGuard);
+//# sourceMappingURL=verify-admin-standard.guard.js.map

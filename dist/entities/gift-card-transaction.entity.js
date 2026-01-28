@@ -44,7 +44,7 @@ __decorate([
     __metadata("design:type", Number)
 ], GiftCardTransaction.prototype, "id_sale", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true }),
     __metadata("design:type", Number)
 ], GiftCardTransaction.prototype, "id_type", void 0);
 __decorate([

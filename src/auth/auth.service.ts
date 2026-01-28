@@ -62,6 +62,7 @@ export class AuthService {
     const result = {
       username: user.username,
       email: user.email,
+      id_admin_type: user.admin ? user.admin.id_admin_type : null,
       ...user.profile,
       store: storeData,
     };

@@ -39,11 +39,11 @@ export class SaleService {
   async findAll(query: GetSalesQueryDto, id_store?: number) {
     const { search_word, limit = 10, skip = 0 } = query;
     const where: any = {};
-    
+
     if (id_store) {
       where.id_store = id_store;
     }
-    
+
     if (search_word) {
       where[Op.or] = [
         { $id$: { [Op.like]: `%${search_word}%` } },
@@ -68,13 +68,17 @@ export class SaleService {
     return this.saleModel.findOne({ where: { id } });
   }
 
-  async create(internal_user_id: number, internal_store_id: number, dto: CreateSaleDto): Promise<Sale> {
+  async create(
+    internal_user_id: number,
+    internal_store_id: number,
+    dto: CreateSaleDto,
+  ): Promise<Sale> {
     const transaction = await this.sequelize.transaction();
 
     try {
       // Agregar el store_id al DTO
       dto.id_store = internal_store_id;
-      
+
       // Generar número de venta
       const saleNumber = await this.generateSaleNumber();
 
@@ -104,6 +108,7 @@ export class SaleService {
           await this.saleItemModel.create(
             {
               id_sale: sale.getDataValue('id'),
+              id_store: dto.id_store,
               id_product: item.id_product,
               quantity: item.quantity,
               price: item.price,
@@ -229,6 +234,7 @@ export class SaleService {
             {
               id_gift_card: giftCard.getDataValue('id'),
               id_sale: sale.getDataValue('id'),
+              id_store: dto.id_store,
               amount: -giftCardData.amount_used, // Negativo porque se está usando
               balance_after: newBalance,
               transaction_type: 'use',
@@ -244,6 +250,7 @@ export class SaleService {
       await this.paymentModel.create(
         {
           id_sale: sale.getDataValue('id'),
+          id_store: dto.id_store,
           id_payment_method: dto.payment.id_payment_method,
           amount: dto.payment.amount,
           reference: dto.payment.reference || null,

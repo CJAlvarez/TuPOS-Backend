@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Admin } from '../../entities/admin.entity';
 
 @Injectable()
-export class VerifyAdminAdminGuard implements CanActivate {
+export class VerifyAdminStandardGuard implements CanActivate {
   constructor(@InjectModel(Admin) private readonly adminModel: typeof Admin) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -17,7 +17,7 @@ export class VerifyAdminAdminGuard implements CanActivate {
     const admin = await this.adminModel.findOne({
       where: {
         id_user: internal_user_id,
-        //id_admin_type: 1, // Admin Admin Type
+        id_admin_type: 2, // Standard Admin Type
       },
     });
     if (!admin) {

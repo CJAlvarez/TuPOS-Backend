@@ -27,8 +27,8 @@ export class GiftCardTransaction extends Model<GiftCardTransaction> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_sale: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  id_type: number;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  id_type?: number;
 
   @Column({ type: DataType.DECIMAL(15, 2), allowNull: false })
   amount: number;

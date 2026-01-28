@@ -27,6 +27,7 @@ let VerifyAdminAdminGuard = class VerifyAdminAdminGuard {
         const admin = await this.adminModel.findOne({
             where: {
                 id_user: internal_user_id,
+                id_admin_type: 1,
             },
         });
         if (!admin) {
@@ -47,4 +48,4 @@ exports.VerifyAdminAdminGuard = VerifyAdminAdminGuard = __decorate([
     __param(0, (0, sequelize_1.InjectModel)(admin_entity_1.Admin)),
     __metadata("design:paramtypes", [Object])
 ], VerifyAdminAdminGuard);
-//# sourceMappingURL=verify-admin-admin.guard.js.map
+//# sourceMappingURL=verify-admin-admin.guard%20copy.js.map
