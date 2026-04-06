@@ -6,6 +6,11 @@ Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
 
+## [v26.0.3] 2026-04-06
+### Changed
+- Se definen los campos para caja en los Productos como opcionales.
+- Se definen los campos caja y código en los Productos como opcionales.
+
 ## [v2.0.2] 2025-10-26
 ### Added
 - Reconstrucción del Sistema

@@ -34,11 +34,11 @@ export class Inventory extends Model<Inventory> {
   @BelongsTo(() => Product)
   product: Product;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  code: string;
+  @Column({ type: DataType.STRING, allowNull: true })
+  code?: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  box_quantity: number;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  box_quantity?: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   unit_quantity: number;
@@ -59,9 +59,10 @@ export class Inventory extends Model<Inventory> {
 }
 
 export interface InventoryCreationAttributes {
+  id_store?: number;
   id_product: number;
-  code: string;
-  box_quantity: number;
+  code?: string;
+  box_quantity?: number;
   unit_quantity: number;
   expiration_date?: Date;
   created_by: number;

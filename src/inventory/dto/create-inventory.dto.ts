@@ -7,13 +7,15 @@ export class CreateInventoryDto {
   @IsInt()
   id_product: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  code: string;
+  code?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsInt()
-  box_quantity: number;
+  box_quantity?: number;
 
   @ApiProperty()
   @IsInt()

@@ -16,7 +16,6 @@ exports.InventoryService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const inventory_entity_1 = require("../entities/inventory.entity");
-const sequelize_2 = require("sequelize");
 const utils_service_1 = require("../utils/utils.service");
 let InventoryService = class InventoryService {
     inventoryModel;
@@ -33,11 +32,6 @@ let InventoryService = class InventoryService {
         }
         if (query.id_product) {
             where.id_product = query.id_product;
-        }
-        if (search_word) {
-            where[sequelize_2.Op.or] = [
-                { $code$: { [sequelize_2.Op.like]: `%${search_word}%` } },
-            ];
         }
         const total = await this.inventoryModel.count({ where });
         const paginate = this.utilsService.paginate(limit, skip, total, false);

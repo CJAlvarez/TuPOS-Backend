@@ -27,9 +27,10 @@ export class CreateProductDto {
   category?: string;
 
   @ApiProperty()
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  box_price: number;
+  box_price?: number;
 
   @ApiProperty()
   @Type(() => Number)
@@ -85,9 +86,10 @@ export class CreateProductDto {
   min_stock?: number;
 
   @ApiProperty()
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  box_amount: number;
+  box_amount?: number;
 
   @ApiProperty()
   @IsNumber()

@@ -5,8 +5,8 @@ export declare class Inventory extends Model<Inventory> {
     id_store: number;
     id_product: number;
     product: Product;
-    code: string;
-    box_quantity: number;
+    code?: string;
+    box_quantity?: number;
     unit_quantity: number;
     expiration_date: Date;
     created_by: number;
@@ -14,9 +14,10 @@ export declare class Inventory extends Model<Inventory> {
     updated_at: Date;
 }
 export interface InventoryCreationAttributes {
+    id_store?: number;
     id_product: number;
-    code: string;
-    box_quantity: number;
+    code?: string;
+    box_quantity?: number;
     unit_quantity: number;
     expiration_date?: Date;
     created_by: number;

@@ -26,11 +26,11 @@ export class InventoryService {
     if (query.id_product) {
       where.id_product = query.id_product;
     }
-    if (search_word) {
-      where[Op.or] = [
-        { $code$: { [Op.like]: `%${search_word}%` } },
-      ];
-    }
+    // if (search_word) {
+    //   where[Op.or] = [
+    //     { $code$: { [Op.like]: `%${search_word}%` } },
+    //   ];
+    // }
     const total = await this.inventoryModel.count({ where });
     const paginate = this.utilsService.paginate(limit, skip, total, false);
     const rows = await this.inventoryModel.findAll({

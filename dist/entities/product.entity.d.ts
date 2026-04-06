@@ -48,4 +48,5 @@ export interface ProductCreationAttributes {
     box_amount: number;
     loyalty_eligible: number;
     created_by: number;
+    id_store?: number;
 }

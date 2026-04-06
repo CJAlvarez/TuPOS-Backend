@@ -72,7 +72,7 @@ export class Product extends Model<Product> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_unit_discount_type: number;
 
-  @Column({ type: DataType.DECIMAL(15, 2), allowNull: false })
+  @Column({ type: DataType.DECIMAL(15, 2), allowNull: true })
   box_price: number;
 
   @Column({ type: DataType.DECIMAL(5, 2), allowNull: true })
@@ -84,7 +84,7 @@ export class Product extends Model<Product> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_box_discount_type: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 1 })
+  @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 1 })
   box_amount: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
@@ -127,4 +127,5 @@ export interface ProductCreationAttributes {
   box_amount: number;
   loyalty_eligible: number;
   created_by: number;
+  id_store?: number;
 }

@@ -115,7 +115,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "id_unit_discount_type", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DECIMAL(15, 2), allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DECIMAL(15, 2), allowNull: true }),
     __metadata("design:type", Number)
 ], Product.prototype, "box_price", void 0);
 __decorate([
@@ -131,7 +131,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "id_box_discount_type", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false, defaultValue: 1 }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true, defaultValue: 1 }),
     __metadata("design:type", Number)
 ], Product.prototype, "box_amount", void 0);
 __decorate([
