@@ -58,7 +58,7 @@ import { StoreModule } from './store/store.module';
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_SCHEMA'),
         autoLoadModels: true,
-        synchronize: true, // Cambia a true solo en desarrollo
+        synchronize: false, // Cambia a true solo en desarrollo
         models: [User, Profile, Client, Admin, Store, Report],
         timezone: '-06:00',
         logging: configService.get<boolean>('DB_LOGGING', false)

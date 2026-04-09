@@ -28,6 +28,7 @@ let StoreService = class StoreService {
     async findAll(query) {
         const { search_word, limit = 10, skip = 0 } = query;
         const where = {};
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (search_word) {
             where[sequelize_2.Op.or] = [
                 { $name$: { [sequelize_2.Op.like]: `%${search_word}%` } },
@@ -58,10 +59,13 @@ let StoreService = class StoreService {
         return this.storeModel.create(dto);
     }
     async update(dto) {
-        return this.storeModel.update(dto, { where: { id: dto.id }, returning: true });
+        return this.storeModel.update(dto, {
+            where: { id: dto.id },
+            returning: true,
+        });
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.storeModel.update({
+        await this.storeModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -70,7 +74,7 @@ let StoreService = class StoreService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.storeModel.update({

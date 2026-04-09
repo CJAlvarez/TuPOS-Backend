@@ -70,7 +70,7 @@ let ReturnItemsService = class ReturnItemsService {
         return updated;
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.returnItemModel.update({
+        await this.returnItemModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -79,7 +79,7 @@ let ReturnItemsService = class ReturnItemsService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.returnItemModel.update({

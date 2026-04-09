@@ -6,6 +6,11 @@ Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
 
+## [v26.0.4] 2026-04-08
+### Fixed
+- Se corrige el mensaje de respuesta al eliminar una entidad.
+- Se corrige el query de findAll para que no incluya los deleted.
+
 ## [v26.0.3] 2026-04-06
 ### Changed
 - Se definen los campos para caja en los Productos como opcionales.

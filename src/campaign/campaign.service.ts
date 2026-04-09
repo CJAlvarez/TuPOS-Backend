@@ -20,6 +20,9 @@ export class CampaignService {
     const { search_word, limit = 10, skip = 0 } = query;
     const where: any = {};
     if (id_store) where.id_store = id_store;
+
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $id$: { [Op.like]: `%${search_word}%` } },
@@ -54,14 +57,15 @@ export class CampaignService {
     return this.campaignModel.create(dto as any);
   }
 
-  async update(
-    dto: UpdateCampaignDto,
-  ): Promise<[number, Campaign[]]> {
-    return this.campaignModel.update(dto, { where: { id: dto.id }, returning: true });
+  async update(dto: UpdateCampaignDto): Promise<[number, Campaign[]]> {
+    return this.campaignModel.update(dto, {
+      where: { id: dto.id },
+      returning: true,
+    });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.campaignModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.campaignModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -73,7 +77,7 @@ export class CampaignService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

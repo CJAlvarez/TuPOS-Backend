@@ -16,6 +16,6 @@ export declare class GiftCardTransactionService {
     findOne(id: number): Promise<GiftCardTransaction | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateGiftCardTransactionDto): Promise<GiftCardTransaction>;
     update(dto: UpdateGiftCardTransactionDto): Promise<[number, GiftCardTransaction[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateGiftCardTransactionStatusDto): Promise<[number, GiftCardTransaction[]]>;
 }

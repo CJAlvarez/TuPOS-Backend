@@ -19,6 +19,9 @@ export class StoreService {
   async findAll(query: GetStoresQueryDto) {
     const { search_word, limit = 10, skip = 0 } = query;
     const where: any = {};
+
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $name$: { [Op.like]: `%${search_word}%` } },
@@ -47,22 +50,20 @@ export class StoreService {
     return this.storeModel.findOne({ where: { id } });
   }
 
-  async create(
-    internal_user_id: number,
-    dto: CreateStoreDto,
-  ): Promise<Store> {
+  async create(internal_user_id: number, dto: CreateStoreDto): Promise<Store> {
     dto.created_by = internal_user_id;
     return this.storeModel.create(dto as any);
   }
 
-  async update(
-    dto: UpdateStoreDto,
-  ): Promise<[number, Store[]]> {
-    return this.storeModel.update(dto, { where: { id: dto.id }, returning: true });
+  async update(dto: UpdateStoreDto): Promise<[number, Store[]]> {
+    return this.storeModel.update(dto, {
+      where: { id: dto.id },
+      returning: true,
+    });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.storeModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.storeModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -74,7 +75,7 @@ export class StoreService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

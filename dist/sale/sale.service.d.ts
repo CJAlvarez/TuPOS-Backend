@@ -31,6 +31,6 @@ export declare class SaleService {
     create(internal_user_id: number, internal_store_id: number, dto: CreateSaleDto): Promise<Sale>;
     private generateSaleNumber;
     update(dto: UpdateSaleDto): Promise<[number, Sale[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateSaleStatusDto): Promise<[number, Sale[]]>;
 }

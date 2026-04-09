@@ -22,11 +22,13 @@ export class NotificationService {
   async findAll(query: GetNotificationsQueryDto, id_store?: number) {
     const { search_word, limit = 10, skip = 0 } = query;
     const where: any = {};
-    
+
     if (id_store) {
       where.id_store = id_store;
     }
-    
+
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $id$: { [Op.like]: `%${search_word}%` } },
@@ -68,8 +70,8 @@ export class NotificationService {
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.notificationModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.notificationModel.update(
       {
         deleted_by: internal_user_id,
         deleted_at: new Date(),
@@ -81,7 +83,7 @@ export class NotificationService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

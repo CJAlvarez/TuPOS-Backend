@@ -30,6 +30,7 @@ let PaymentService = class PaymentService {
         const where = {};
         if (id_store)
             where.id_store = id_store;
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (id_sale)
             where.id_sale = id_sale;
         if (search_word) {
@@ -60,10 +61,13 @@ let PaymentService = class PaymentService {
         return this.paymentModel.create(dto);
     }
     async update(dto) {
-        return this.paymentModel.update(dto, { where: { id: dto.id }, returning: true });
+        return this.paymentModel.update(dto, {
+            where: { id: dto.id },
+            returning: true,
+        });
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.paymentModel.update({
+        await this.paymentModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -72,7 +76,7 @@ let PaymentService = class PaymentService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.paymentModel.update({

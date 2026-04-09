@@ -68,8 +68,8 @@ export class ReturnItemsService {
     return updated;
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.returnItemModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.returnItemModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -81,7 +81,7 @@ export class ReturnItemsService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

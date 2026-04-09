@@ -22,7 +22,11 @@ export class ReturnsService {
     private readonly utilsService: UtilsService,
   ) {}
 
-  async create(dto: CreateReturnDto, internal_user_id: number, internal_store_id: number) {
+  async create(
+    dto: CreateReturnDto,
+    internal_user_id: number,
+    internal_store_id: number,
+  ) {
     const date = new Date(dto.date);
     const returns = await this.returnModel.create({
       ...dto,
@@ -50,6 +54,7 @@ export class ReturnsService {
     const { search_word, limit = 10, skip = 0, id_sale } = query;
     const where: any = {};
     if (id_store) where.id_store = id_store;
+    where.deleted_at = { [Op.is]: null };
     if (id_sale) where.id_sale = id_sale;
     if (search_word) {
       where[Op.or] = [
@@ -132,8 +137,8 @@ export class ReturnsService {
     return updated;
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.returnModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.returnModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -145,7 +150,7 @@ export class ReturnsService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

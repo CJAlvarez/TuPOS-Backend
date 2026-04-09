@@ -16,6 +16,6 @@ export declare class StoreService {
     findOne(id: number): Promise<Store | null>;
     create(internal_user_id: number, dto: CreateStoreDto): Promise<Store>;
     update(dto: UpdateStoreDto): Promise<[number, Store[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateStoreStatusDto): Promise<[number, Store[]]>;
 }

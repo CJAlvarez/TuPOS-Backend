@@ -44,6 +44,8 @@ export class SaleService {
       where.id_store = id_store;
     }
 
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $id$: { [Op.like]: `%${search_word}%` } },
@@ -290,8 +292,8 @@ export class SaleService {
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.saleModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.saleModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -303,7 +305,7 @@ export class SaleService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

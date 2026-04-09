@@ -20,11 +20,13 @@ export class SaleItemService {
   async findAll(query: GetSaleItemsQueryDto, id_store?: number) {
     const { search_word, limit = 10, skip = 0, id_sale } = query;
     const where: any = {};
-    
+
     if (id_store) {
       where.id_store = id_store;
     }
-    
+
+    where.deleted_at = { [Op.is]: null };
+
     if (id_sale) where.id_sale = id_sale;
     if (search_word) {
       where[Op.or] = [{ $price$: { [Op.like]: `%${search_word}%` } }];
@@ -71,8 +73,8 @@ export class SaleItemService {
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.saleItemModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.saleItemModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -84,7 +86,7 @@ export class SaleItemService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

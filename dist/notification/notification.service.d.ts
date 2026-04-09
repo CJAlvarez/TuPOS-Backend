@@ -18,7 +18,7 @@ export declare class NotificationService {
     findOne(id: number): Promise<Notification | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateNotificationDto): Promise<Notification>;
     update(dto: UpdateNotificationDto): Promise<[number, Notification[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateNotificationStatusDto): Promise<[number, Notification[]]>;
     updateSeen(internal_user_id: number, dto: UpdateNotificationSeenDto): Promise<[number, Notification[]]>;
     updateArchived(internal_user_id: number, dto: UpdateNotificationArchivedDto): Promise<[number, Notification[]]>;

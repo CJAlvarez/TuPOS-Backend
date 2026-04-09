@@ -16,6 +16,6 @@ export declare class RoyaltyService {
     findOne(id: number): Promise<Royalty | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateRoyaltyDto): Promise<Royalty>;
     update(dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateRoyaltyStatusDto): Promise<[number, Royalty[]]>;
 }

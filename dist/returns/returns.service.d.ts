@@ -22,6 +22,6 @@ export declare class ReturnsService {
     getProducts(query: GetProductsQueryDto): Promise<SaleItem[]>;
     findOne(id: number): Promise<Return>;
     update(dto: UpdateReturnDto, internal_user_id: number): Promise<Return>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateReturnStatusDto): Promise<[number, Return[]]>;
 }

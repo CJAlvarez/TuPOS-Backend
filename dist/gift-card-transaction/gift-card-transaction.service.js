@@ -30,6 +30,7 @@ let GiftCardTransactionService = class GiftCardTransactionService {
         const where = {};
         if (id_store)
             where.id_store = id_store;
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (search_word) {
             where[sequelize_2.Op.or] = [
                 { $id$: { [sequelize_2.Op.like]: `%${search_word}%` } },
@@ -58,10 +59,13 @@ let GiftCardTransactionService = class GiftCardTransactionService {
         return this.giftCardTransactionModel.create(dto);
     }
     async update(dto) {
-        return this.giftCardTransactionModel.update(dto, { where: { id: dto.id }, returning: true });
+        return this.giftCardTransactionModel.update(dto, {
+            where: { id: dto.id },
+            returning: true,
+        });
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.giftCardTransactionModel.update({
+        await this.giftCardTransactionModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -70,7 +74,7 @@ let GiftCardTransactionService = class GiftCardTransactionService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.giftCardTransactionModel.update({

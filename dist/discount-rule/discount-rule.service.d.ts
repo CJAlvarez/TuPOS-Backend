@@ -16,6 +16,6 @@ export declare class DiscountRuleService {
     findOne(id: number): Promise<DiscountRule | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateDiscountRuleDto): Promise<DiscountRule>;
     update(dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateDiscountRuleStatusDto): Promise<[number, DiscountRule[]]>;
 }

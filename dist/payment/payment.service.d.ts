@@ -16,6 +16,6 @@ export declare class PaymentService {
     findOne(id: number): Promise<Payment | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreatePaymentDto): Promise<Payment>;
     update(dto: UpdatePaymentDto): Promise<[number, Payment[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdatePaymentStatusDto): Promise<[number, Payment[]]>;
 }

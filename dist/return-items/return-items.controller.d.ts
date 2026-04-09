@@ -14,6 +14,6 @@ export declare class ReturnItemsController {
     }>;
     findOne(id: string): Promise<import("../entities/return-item.entity").ReturnItem>;
     update(dto: UpdateReturnItemDto, req: any): Promise<import("../entities/return-item.entity").ReturnItem>;
-    remove(id: string, req: any): Promise<number>;
+    remove(id: string, req: any): Promise<any>;
     updateStatus(dto: UpdateReturnItemStatusDto, req: any): Promise<[number, import("../entities/return-item.entity").ReturnItem[]]>;
 }

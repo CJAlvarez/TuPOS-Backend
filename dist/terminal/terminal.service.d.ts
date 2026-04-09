@@ -16,6 +16,6 @@ export declare class TerminalService {
     findOne(id: number): Promise<Terminal | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateTerminalDto): Promise<Terminal>;
     update(dto: UpdateTerminalDto): Promise<[number, Terminal[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateTerminalStatusDto): Promise<[number, Terminal[]]>;
 }

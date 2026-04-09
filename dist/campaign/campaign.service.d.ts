@@ -16,6 +16,6 @@ export declare class CampaignService {
     findOne(id: number): Promise<Campaign | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateCampaignDto): Promise<Campaign>;
     update(dto: UpdateCampaignDto): Promise<[number, Campaign[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateCampaignStatusDto): Promise<[number, Campaign[]]>;
 }

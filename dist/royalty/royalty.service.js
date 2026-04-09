@@ -30,6 +30,7 @@ let RoyaltyService = class RoyaltyService {
         const where = {};
         if (id_store)
             where.id_store = id_store;
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (id_client)
             where.id_client = id_client;
         if (search_word) {
@@ -66,7 +67,7 @@ let RoyaltyService = class RoyaltyService {
         });
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.royaltyModel.update({
+        await this.royaltyModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -75,7 +76,7 @@ let RoyaltyService = class RoyaltyService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.royaltyModel.update({

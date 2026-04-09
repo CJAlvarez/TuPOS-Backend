@@ -18,7 +18,7 @@ export declare class CashboxService {
     findOne(id: number): Promise<Cashbox | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateCashboxDto): Promise<Cashbox>;
     update(dto: UpdateCashboxDto): Promise<[number, Cashbox[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateCashboxStatusDto): Promise<[number, Cashbox[]]>;
     openCashbox(internal_user_id: number, dto: OpenCashboxDto): Promise<[number, Cashbox[]]>;
     closeCashbox(internal_user_id: number, dto: CloseCashboxDto): Promise<[number, Cashbox[]]>;

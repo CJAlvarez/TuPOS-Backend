@@ -16,6 +16,6 @@ export declare class ReturnsController {
     getProducts(query: GetProductsQueryDto): Promise<import("../entities/sale-item.entity").SaleItem[]>;
     findOne(id: string): Promise<import("../entities/return.entity").Return>;
     update(dto: UpdateReturnDto, req: any): Promise<import("../entities/return.entity").Return>;
-    remove(id: string, req: any): Promise<number>;
+    remove(id: string, req: any): Promise<any>;
     updateStatus(dto: UpdateReturnStatusDto, req: any): Promise<[number, import("../entities/return.entity").Return[]]>;
 }

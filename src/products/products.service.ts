@@ -22,6 +22,9 @@ export class ProductsService {
 
     const where: any = {};
     if (id_store) where.id_store = id_store;
+
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $name$: { [Op.like]: `%${search_word}%` } },
@@ -50,6 +53,7 @@ export class ProductsService {
     const { search_word } = query;
     const where: any = {
       disabled_at: { [Op.is]: null },
+      deleted_at: { [Op.is]: null },
     };
     if (id_store) where.id_store = id_store;
     if (search_word) {
@@ -104,8 +108,8 @@ export class ProductsService {
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.productModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.productModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -117,7 +121,7 @@ export class ProductsService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

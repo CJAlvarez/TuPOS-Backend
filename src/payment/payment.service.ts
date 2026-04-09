@@ -20,6 +20,9 @@ export class PaymentService {
     const { search_word, limit = 10, skip = 0, id_sale } = query;
     const where: any = {};
     if (id_store) where.id_store = id_store;
+
+    where.deleted_at = { [Op.is]: null };
+    
     if (id_sale) where.id_sale = id_sale;
     if (search_word) {
       where[Op.or] = [
@@ -55,14 +58,15 @@ export class PaymentService {
     return this.paymentModel.create(dto as any);
   }
 
-  async update(
-    dto: UpdatePaymentDto,
-  ): Promise<[number, Payment[]]> {
-    return this.paymentModel.update(dto, { where: { id: dto.id }, returning: true });
+  async update(dto: UpdatePaymentDto): Promise<[number, Payment[]]> {
+    return this.paymentModel.update(dto, {
+      where: { id: dto.id },
+      returning: true,
+    });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.paymentModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.paymentModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -74,7 +78,7 @@ export class PaymentService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

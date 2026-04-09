@@ -16,6 +16,6 @@ export declare class ReturnItemsService {
     }>;
     findOne(id: number): Promise<ReturnItem>;
     update(dto: UpdateReturnItemDto, internal_user_id: number): Promise<ReturnItem>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateReturnItemStatusDto): Promise<[number, ReturnItem[]]>;
 }

@@ -52,6 +52,7 @@ let ReturnsService = class ReturnsService {
         const where = {};
         if (id_store)
             where.id_store = id_store;
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (id_sale)
             where.id_sale = id_sale;
         if (search_word) {
@@ -130,7 +131,7 @@ let ReturnsService = class ReturnsService {
         return updated;
     }
     async remove(internal_user_id, id) {
-        const [affectedRows] = await this.returnModel.update({
+        await this.returnModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
@@ -139,7 +140,7 @@ let ReturnsService = class ReturnsService {
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
-        return affectedRows;
+        return { title: 'Operación exitosa' };
     }
     async updateStatus(internal_user_id, dto) {
         return this.returnModel.update({

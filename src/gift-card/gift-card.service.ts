@@ -20,6 +20,9 @@ export class GiftCardService {
     const { search_word, limit = 10, skip = 0 } = query;
     const where: any = {};
     if (id_store) where.id_store = id_store;
+
+    where.deleted_at = { [Op.is]: null };
+
     if (search_word) {
       where[Op.or] = [
         { $id$: { [Op.like]: `%${search_word}%` } },
@@ -52,7 +55,7 @@ export class GiftCardService {
     dto.created_by = internal_user_id;
     dto.id_store = internal_store_id;
     dto.current_balance = dto.initial_balance;
-    
+
     // Convertir strings de fecha a objetos Date
     const giftCardData: any = { ...dto };
     if (dto.issued_at) {
@@ -61,7 +64,7 @@ export class GiftCardService {
     if (dto.expires_at) {
       giftCardData.expires_at = new Date(dto.expires_at);
     }
-    
+
     return this.giftCardModel.create(giftCardData);
   }
 
@@ -73,8 +76,8 @@ export class GiftCardService {
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    const [affectedRows] = await this.giftCardModel.update(
+  async remove(internal_user_id: number, id: number): Promise<any> {
+    await this.giftCardModel.update(
       {
         deleted_at: new Date(),
         deleted_by: internal_user_id,
@@ -86,7 +89,7 @@ export class GiftCardService {
         },
       },
     );
-    return affectedRows;
+    return { title: 'Operación exitosa' };
   }
 
   async updateStatus(

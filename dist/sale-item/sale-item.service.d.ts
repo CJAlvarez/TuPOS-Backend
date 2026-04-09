@@ -16,6 +16,6 @@ export declare class SaleItemService {
     findOne(id: number): Promise<SaleItem | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateSaleItemDto): Promise<SaleItem>;
     update(dto: UpdateSaleItemDto): Promise<[number, SaleItem[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateSaleItemStatusDto): Promise<[number, SaleItem[]]>;
 }

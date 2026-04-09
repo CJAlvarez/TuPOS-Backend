@@ -69,7 +69,7 @@ exports.AppModule = AppModule = __decorate([
                     password: configService.get('DB_PASS'),
                     database: configService.get('DB_SCHEMA'),
                     autoLoadModels: true,
-                    synchronize: true,
+                    synchronize: false,
                     models: [user_entity_1.User, profile_entity_1.Profile, client_entity_1.Client, admin_entity_1.Admin, store_entity_1.Store, report_entity_1.Report],
                     timezone: '-06:00',
                     logging: configService.get('DB_LOGGING', false)
