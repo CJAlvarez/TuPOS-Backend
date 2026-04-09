@@ -7,6 +7,9 @@ Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
 Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
 
 ## [v26.0.4] 2026-04-08
+### Changed
+- Se cambia el Cron de Jobs a que sólo se ejecute si la variable EXECUTE_JOBS_EVERY existe, esta define cada cuantos minutos se ejecutan los jobs.
+
 ### Fixed
 - Se corrige el mensaje de respuesta al eliminar una entidad.
 - Se corrige el query de findAll para que no incluya los deleted.

@@ -2,7 +2,8 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Job } from '../entities/job.entity';
 import { Op } from 'sequelize';
-import { Cron } from '@nestjs/schedule';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 import { JobDto } from './dto/job.dto';
 import { EmailService } from 'src/email/email.service';
 
@@ -13,10 +14,22 @@ export class JobsService implements OnModuleInit {
   constructor(
     @InjectModel(Job) private readonly jobModel: typeof Job,
     private readonly emailService: EmailService,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async onModuleInit() {
-    this.processJobs();
+    if (process.env.EXECUTE_JOBS_EVERY) {
+      const job = new CronJob(
+        `*/${process.env.EXECUTE_JOBS_EVERY} * * * *`,
+        () => {
+          this.processJobs();
+        },
+        null,
+        true,
+        process.env.TZ || 'America/Tegucigalpa',
+      );
+      this.schedulerRegistry.addCronJob('processJobs', job);
+    }
   }
 
   async addJob(jobDto: JobDto) {
@@ -27,10 +40,6 @@ export class JobsService implements OnModuleInit {
     });
   }
 
-  @Cron('*/5 * * * *', {
-    name: 'processJobs',
-    timeZone: process.env.TZ || 'America/Tegucigalpa',
-  })
   async processJobs() {
     const jobs = await this.jobModel.findAll({
       where: {
@@ -51,7 +60,9 @@ export class JobsService implements OnModuleInit {
         job.setDataValue('completed_at', new Date());
         await job.save();
       } catch (error) {
-        this.logger.error(`Failed to process job ${job.id}: ${error.message}`);
+        this.logger.error(
+          `Failed to process job ${job.id}: ${(error as Error).message}`,
+        );
         job.setDataValue('status', 'failed');
         await job.save();
       }
