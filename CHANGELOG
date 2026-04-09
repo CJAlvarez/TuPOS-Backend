@@ -9,6 +9,7 @@ Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores
 ## [v26.0.4] 2026-04-08
 ### Changed
 - Se cambia el Cron de Jobs a que sólo se ejecute si la variable EXECUTE_JOBS_EVERY existe, esta define cada cuantos minutos se ejecutan los jobs.
+- Se cambia el proceso que controla ACTIVE_HOURS, si no se define, no se apaga el proceso.
 
 ### Fixed
 - Se corrige el mensaje de respuesta al eliminar una entidad.

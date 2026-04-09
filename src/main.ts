@@ -13,6 +13,12 @@ function setupRailwayAutoShutdown(): void {
     return;
   }
 
+  // Si no se ha configurado el tiempo de actividad, no hacer nada
+  if(!process.env.ACTIVE_HOURS) {
+    console.log(`🚀 [Railway] Servicio iniciado. Permanecerá activo indefinidamente.`);
+    return;
+  }
+
   // Obtener las horas activas de la variable de entorno (por defecto 11 horas)
   const activeHours = parseInt(process.env.ACTIVE_HOURS || '11', 10);
   const activeTimeMs = activeHours * 60 * 60 * 1000; // Convertir a milisegundos
