@@ -44,7 +44,7 @@ export class Inventory extends Model<Inventory> {
   unit_quantity: number;
 
   @Column({ type: DataType.DATE, allowNull: true })
-  expiration_date: Date;
+  expiration_date: Date | null;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   created_by: number;

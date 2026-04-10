@@ -7,10 +7,11 @@ import { Admin } from 'src/entities/admin.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { JobsModule } from 'src/jobs/jobs.module';
 import { UtilsModule } from 'src/utils/utils.module';
+import { Product } from 'src/entities/product.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Inventory, Admin]),
+    SequelizeModule.forFeature([Inventory, Product, Admin]),
     AuthModule,
     JobsModule,
     UtilsModule,

@@ -18,11 +18,15 @@ const sequelize_1 = require("@nestjs/sequelize");
 const gift_card_entity_1 = require("../entities/gift-card.entity");
 const sequelize_2 = require("sequelize");
 const utils_service_1 = require("../utils/utils.service");
+const mathTools = require("../utils/math-tools");
+const gift_card_transaction_entity_1 = require("../entities/gift-card-transaction.entity");
 let GiftCardService = class GiftCardService {
     giftCardModel;
+    giftCardTransactionModel;
     utilsService;
-    constructor(giftCardModel, utilsService) {
+    constructor(giftCardModel, giftCardTransactionModel, utilsService) {
         this.giftCardModel = giftCardModel;
+        this.giftCardTransactionModel = giftCardTransactionModel;
         this.utilsService = utilsService;
     }
     async findAll(query, id_store) {
@@ -91,11 +95,38 @@ let GiftCardService = class GiftCardService {
             disabled_by: dto.enable ? null : internal_user_id,
         }, { where: { id: dto.id }, returning: true });
     }
+    async processGiftCards(giftCards, sale, userId, storeId, transaction) {
+        if (!giftCards?.length)
+            return;
+        for (const gc of giftCards) {
+            const giftCard = await this.giftCardModel.findByPk(gc.id_gift_card, {
+                transaction,
+            });
+            if (!giftCard) {
+                throw new common_1.BadRequestException(`GiftCard ${gc.id_gift_card} no encontrada`);
+            }
+            const balance = Number(giftCard.getDataValue('current_balance'));
+            if (balance < gc.amount_used) {
+                throw new common_1.BadRequestException(`Saldo insuficiente`);
+            }
+            const newBalance = mathTools.sub(balance, gc.amount_used);
+            await giftCard.update({ current_balance: newBalance }, { transaction });
+            await this.giftCardTransactionModel.create({
+                id_gift_card: giftCard.getDataValue('id'),
+                id_sale: sale.id,
+                id_store: storeId,
+                amount: gc.amount_used,
+                id_type: 2,
+                created_by: userId,
+            }, { transaction });
+        }
+    }
 };
 exports.GiftCardService = GiftCardService;
 exports.GiftCardService = GiftCardService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(gift_card_entity_1.GiftCard)),
-    __metadata("design:paramtypes", [Object, utils_service_1.UtilsService])
+    __param(1, (0, sequelize_1.InjectModel)(gift_card_transaction_entity_1.GiftCardTransaction)),
+    __metadata("design:paramtypes", [Object, Object, utils_service_1.UtilsService])
 ], GiftCardService);
 //# sourceMappingURL=gift-card.service.js.map

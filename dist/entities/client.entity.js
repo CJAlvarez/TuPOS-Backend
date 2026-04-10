@@ -23,6 +23,7 @@ let Client = class Client extends sequelize_typescript_1.Model {
     disabled_by;
     deleted_at;
     deleted_by;
+    loyalty_points;
 };
 exports.Client = Client;
 __decorate([
@@ -42,7 +43,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Client.prototype, "id_store", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true, defaultValue: 2 }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true, defaultValue: 1 }),
     __metadata("design:type", Number)
 ], Client.prototype, "loyalty_eligible", void 0);
 __decorate([

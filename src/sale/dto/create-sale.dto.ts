@@ -61,6 +61,11 @@ export class PaymentDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @ApiPropertyOptional({ description: 'Puntos de lealtad utilizados' })
+  @IsOptional()
+  @IsNumber()
+  loyalty_points?: number;
 }
 
 export class CreateSaleDto {

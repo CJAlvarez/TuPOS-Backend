@@ -9,13 +9,15 @@ import { Admin } from '../entities/admin.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UtilsModule } from 'src/utils/utils.module';
 import { JobsModule } from 'src/jobs/jobs.module';
+import { RoyaltyModule } from 'src/royalty/royalty.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Client, User, Profile, Admin]),
     UtilsModule,
     AuthModule,
-    JobsModule
+    JobsModule,
+    RoyaltyModule
   ],
   controllers: [ClientsController],
   providers: [ClientsService],

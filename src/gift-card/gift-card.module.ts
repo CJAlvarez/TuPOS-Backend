@@ -7,10 +7,11 @@ import { Admin } from 'src/entities/admin.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { JobsModule } from 'src/jobs/jobs.module';
 import { UtilsModule } from 'src/utils/utils.module';
+import { GiftCardTransaction } from 'src/entities/gift-card-transaction.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([GiftCard, Admin]),
+    SequelizeModule.forFeature([GiftCard, GiftCardTransaction, Admin]),
     AuthModule,
     JobsModule,
     UtilsModule,

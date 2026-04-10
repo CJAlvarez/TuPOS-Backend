@@ -14,4 +14,5 @@ export declare class Client extends Model<Client, ClientCreationAttributes> {
     disabled_by?: number | null;
     deleted_at?: Date;
     deleted_by?: number;
+    loyalty_points?: number;
 }

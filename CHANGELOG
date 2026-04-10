@@ -7,6 +7,9 @@ Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
 Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
 
 ## [v26.0.4] 2026-04-08
+### Added
+- Se deja funcional el módulo de Lealtad(Royalty).
+
 ### Changed
 - Se cambia el Cron de Jobs a que sólo se ejecute si la variable EXECUTE_JOBS_EVERY existe, esta define cada cuantos minutos se ejecutan los jobs.
 - Se cambia el proceso que controla ACTIVE_HOURS, si no se define, no se apaga el proceso.

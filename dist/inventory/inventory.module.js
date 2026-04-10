@@ -16,13 +16,14 @@ const admin_entity_1 = require("../entities/admin.entity");
 const auth_module_1 = require("../auth/auth.module");
 const jobs_module_1 = require("../jobs/jobs.module");
 const utils_module_1 = require("../utils/utils.module");
+const product_entity_1 = require("../entities/product.entity");
 let InventoryModule = class InventoryModule {
 };
 exports.InventoryModule = InventoryModule;
 exports.InventoryModule = InventoryModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            sequelize_1.SequelizeModule.forFeature([inventory_entity_1.Inventory, admin_entity_1.Admin]),
+            sequelize_1.SequelizeModule.forFeature([inventory_entity_1.Inventory, product_entity_1.Product, admin_entity_1.Admin]),
             auth_module_1.AuthModule,
             jobs_module_1.JobsModule,
             utils_module_1.UtilsModule,

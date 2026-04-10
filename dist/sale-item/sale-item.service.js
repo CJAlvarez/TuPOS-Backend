@@ -66,6 +66,18 @@ let SaleItemService = class SaleItemService {
         dto.id_store = internal_store_id;
         return this.saleItemModel.create(dto);
     }
+    async createCustom(saleId, item, storeId, transaction) {
+        await this.saleItemModel.create({
+            id_sale: saleId,
+            id_store: storeId,
+            id_product: item.id_product,
+            quantity: item.quantity,
+            price: item.price,
+            discount: item.discount,
+            tax: item.tax,
+            total: item.total,
+        }, { transaction });
+    }
     async update(dto) {
         return this.saleItemModel.update(dto, {
             where: { id: dto.id },

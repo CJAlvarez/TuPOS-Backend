@@ -58,7 +58,7 @@ __decorate([
 ], Inventory.prototype, "unit_quantity", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE, allowNull: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", Object)
 ], Inventory.prototype, "expiration_date", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),

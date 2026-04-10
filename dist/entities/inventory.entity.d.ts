@@ -8,7 +8,7 @@ export declare class Inventory extends Model<Inventory> {
     code?: string;
     box_quantity?: number;
     unit_quantity: number;
-    expiration_date: Date;
+    expiration_date: Date | null;
     created_by: number;
     created_at: Date;
     updated_at: Date;

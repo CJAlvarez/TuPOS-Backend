@@ -16,13 +16,14 @@ const admin_entity_1 = require("../entities/admin.entity");
 const auth_module_1 = require("../auth/auth.module");
 const jobs_module_1 = require("../jobs/jobs.module");
 const utils_module_1 = require("../utils/utils.module");
+const gift_card_transaction_entity_1 = require("../entities/gift-card-transaction.entity");
 let GiftCardModule = class GiftCardModule {
 };
 exports.GiftCardModule = GiftCardModule;
 exports.GiftCardModule = GiftCardModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            sequelize_1.SequelizeModule.forFeature([gift_card_entity_1.GiftCard, admin_entity_1.Admin]),
+            sequelize_1.SequelizeModule.forFeature([gift_card_entity_1.GiftCard, gift_card_transaction_entity_1.GiftCardTransaction, admin_entity_1.Admin]),
             auth_module_1.AuthModule,
             jobs_module_1.JobsModule,
             utils_module_1.UtilsModule,

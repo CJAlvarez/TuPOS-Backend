@@ -19,17 +19,25 @@ const sequelize_1 = require("@nestjs/sequelize");
 const job_entity_1 = require("../entities/job.entity");
 const sequelize_2 = require("sequelize");
 const schedule_1 = require("@nestjs/schedule");
+const cron_1 = require("cron");
 const email_service_1 = require("../email/email.service");
 let JobsService = JobsService_1 = class JobsService {
     jobModel;
     emailService;
+    schedulerRegistry;
     logger = new common_1.Logger(JobsService_1.name);
-    constructor(jobModel, emailService) {
+    constructor(jobModel, emailService, schedulerRegistry) {
         this.jobModel = jobModel;
         this.emailService = emailService;
+        this.schedulerRegistry = schedulerRegistry;
     }
     async onModuleInit() {
-        this.processJobs();
+        if (process.env.EXECUTE_JOBS_EVERY) {
+            const job = new cron_1.CronJob(`*/${process.env.EXECUTE_JOBS_EVERY} * * * *`, () => {
+                this.processJobs();
+            }, null, true, process.env.TZ || 'America/Tegucigalpa');
+            this.schedulerRegistry.addCronJob('processJobs', job);
+        }
     }
     async addJob(jobDto) {
         await this.jobModel.create({
@@ -66,18 +74,10 @@ let JobsService = JobsService_1 = class JobsService {
     }
 };
 exports.JobsService = JobsService;
-__decorate([
-    (0, schedule_1.Cron)('*/5 * * * *', {
-        name: 'processJobs',
-        timeZone: process.env.TZ || 'America/Tegucigalpa',
-    }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], JobsService.prototype, "processJobs", null);
 exports.JobsService = JobsService = JobsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(job_entity_1.Job)),
-    __metadata("design:paramtypes", [Object, email_service_1.EmailService])
+    __metadata("design:paramtypes", [Object, email_service_1.EmailService,
+        schedule_1.SchedulerRegistry])
 ], JobsService);
 //# sourceMappingURL=jobs.service.js.map

@@ -66,6 +66,22 @@ export class SaleItemService {
     return this.saleItemModel.create(dto as any);
   }
 
+  async createCustom(saleId, item, storeId, transaction) {
+    await this.saleItemModel.create(
+      {
+        id_sale: saleId,
+        id_store: storeId,
+        id_product: item.id_product,
+        quantity: item.quantity,
+        price: item.price,
+        discount: item.discount,
+        tax: item.tax,
+        total: item.total,
+      } as any,
+      { transaction },
+    );
+  }
+
   async update(dto: UpdateSaleItemDto): Promise<[number, SaleItem[]]> {
     return this.saleItemModel.update(dto, {
       where: { id: dto.id },

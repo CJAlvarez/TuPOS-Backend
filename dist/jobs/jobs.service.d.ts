@@ -1,12 +1,14 @@
 import { OnModuleInit } from '@nestjs/common';
 import { Job } from '../entities/job.entity';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { JobDto } from './dto/job.dto';
 import { EmailService } from 'src/email/email.service';
 export declare class JobsService implements OnModuleInit {
     private readonly jobModel;
     private readonly emailService;
+    private readonly schedulerRegistry;
     private readonly logger;
-    constructor(jobModel: typeof Job, emailService: EmailService);
+    constructor(jobModel: typeof Job, emailService: EmailService, schedulerRegistry: SchedulerRegistry);
     onModuleInit(): Promise<void>;
     addJob(jobDto: JobDto): Promise<void>;
     processJobs(): Promise<void>;

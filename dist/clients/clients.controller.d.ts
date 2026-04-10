@@ -8,7 +8,29 @@ export declare class ClientsController {
     constructor(clientsService: ClientsService);
     getClients(req: any, query: GetClientsQueryDto): Promise<{
         count: number;
-        list: import("../entities/client.entity").Client[];
+        list: {
+            loyalty_points: number;
+            profile?: import("../entities/profile.entity").Profile;
+            user?: import("../entities/user.entity").User;
+            id_user: number;
+            id_store: number;
+            loyalty_eligible: number;
+            disabled_at?: Date | null;
+            disabled_by?: number | null;
+            deleted_at?: Date;
+            deleted_by?: number;
+            id?: number | any;
+            createdAt?: Date | any;
+            updatedAt?: Date | any;
+            deletedAt?: Date | any;
+            version?: number | any;
+            _attributes: import("../entities/client.entity").Client;
+            dataValues: import("../entities/client.entity").Client;
+            _creationAttributes: import("../entities/client.entity").ClientCreationAttributes;
+            isNewRecord: boolean;
+            sequelize: import("sequelize").Sequelize;
+            _model: import("sequelize").Model<import("../entities/client.entity").Client, import("../entities/client.entity").ClientCreationAttributes>;
+        }[];
         skip: number;
     }>;
     getClientDetail(id: number): Promise<import("../entities/client.entity").Client>;

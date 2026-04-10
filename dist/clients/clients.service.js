@@ -22,19 +22,22 @@ const sequelize_2 = require("sequelize");
 const utils_service_1 = require("../utils/utils.service");
 const jobs_service_1 = require("../jobs/jobs.service");
 const sequelize_typescript_1 = require("sequelize-typescript");
+const royalty_service_1 = require("../royalty/royalty.service");
 let ClientsService = class ClientsService {
     clientModel;
     userModel;
     profileModel;
     jobsService;
     utilsService;
+    royaltyService;
     sequelize;
-    constructor(clientModel, userModel, profileModel, jobsService, utilsService, sequelize) {
+    constructor(clientModel, userModel, profileModel, jobsService, utilsService, royaltyService, sequelize) {
         this.clientModel = clientModel;
         this.userModel = userModel;
         this.profileModel = profileModel;
         this.jobsService = jobsService;
         this.utilsService = utilsService;
+        this.royaltyService = royaltyService;
         this.sequelize = sequelize;
     }
     async getClients(query, id_store) {
@@ -67,9 +70,13 @@ let ClientsService = class ClientsService {
             limit: paginate.limit,
             offset: paginate.offset,
         });
+        const list = await Promise.all(rows.map(async (row) => ({
+            ...row.toJSON(),
+            loyalty_points: row.getDataValue('loyalty_eligible') ? await this.royaltyService.getAvailablePoints(row.getDataValue('id_user'), null) : 0,
+        })));
         return {
             count: total,
-            list: rows.map((row) => row.toJSON()),
+            list,
             skip: paginate.skip,
         };
     }
@@ -230,6 +237,7 @@ exports.ClientsService = ClientsService = __decorate([
     __param(2, (0, sequelize_1.InjectModel)(profile_entity_1.Profile)),
     __metadata("design:paramtypes", [Object, Object, Object, jobs_service_1.JobsService,
         utils_service_1.UtilsService,
+        royalty_service_1.RoyaltyService,
         sequelize_typescript_1.Sequelize])
 ], ClientsService);
 //# sourceMappingURL=clients.service.js.map

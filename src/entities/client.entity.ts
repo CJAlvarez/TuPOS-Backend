@@ -29,7 +29,7 @@ export class Client extends Model<Client, ClientCreationAttributes> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_store: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 2 })
+  @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 1 })
   loyalty_eligible: number;
 
   @Column({ type: DataType.DATE, allowNull: true })
@@ -43,4 +43,6 @@ export class Client extends Model<Client, ClientCreationAttributes> {
 
   @Column({ type: DataType.INTEGER, allowNull: true })
   deleted_by?: number;
+
+  loyalty_points?: number;
 }

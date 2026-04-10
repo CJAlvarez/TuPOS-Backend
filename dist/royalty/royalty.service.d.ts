@@ -4,10 +4,12 @@ import { UpdateRoyaltyDto } from './dto/update-royalty.dto';
 import { GetRoyaltiesQueryDto } from './dto/get-royalties-query.dto';
 import { UpdateRoyaltyStatusDto } from './dto/update-royalty-status.dto';
 import { UtilsService } from 'src/utils/utils.service';
+import { Sequelize } from 'sequelize-typescript';
 export declare class RoyaltyService {
     private readonly royaltyModel;
     private readonly utilsService;
-    constructor(royaltyModel: typeof Royalty, utilsService: UtilsService);
+    private readonly sequelize;
+    constructor(royaltyModel: typeof Royalty, utilsService: UtilsService, sequelize: Sequelize);
     findAll(query: GetRoyaltiesQueryDto, id_store?: number): Promise<{
         count: number;
         list: Royalty[];
@@ -18,4 +20,17 @@ export declare class RoyaltyService {
     update(dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]>;
     remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateRoyaltyStatusDto): Promise<[number, Royalty[]]>;
+    processRoyalty(dto: any, transaction: any): Promise<{
+        moneyAmount: any;
+        pointsUsed: number;
+    } | {
+        moneyAmount: number;
+        pointsUsed: any;
+    }>;
+    getAvailablePoints(clientId: any, transaction: any): Promise<number>;
+    private validateMinUse;
+    consumePointsFIFO(clientId: any, pointsToUse: any, transaction: any): Promise<void>;
+    private bulkUpdatePoints;
+    generatePoints(clientId: any, moneyAmount: any, saleId: any, userId: any, storeId: any, transaction: any): Promise<void>;
+    private calculateExpireDate;
 }

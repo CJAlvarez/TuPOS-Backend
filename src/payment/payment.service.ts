@@ -22,7 +22,7 @@ export class PaymentService {
     if (id_store) where.id_store = id_store;
 
     where.deleted_at = { [Op.is]: null };
-    
+
     if (id_sale) where.id_sale = id_sale;
     if (search_word) {
       where[Op.or] = [
@@ -58,6 +58,21 @@ export class PaymentService {
     return this.paymentModel.create(dto as any);
   }
 
+  async createPaymentCustom(payment, sale, storeId, userId, transaction) {
+    await this.paymentModel.create(
+      {
+        id_sale: sale.id,
+        id_store: storeId,
+        id_payment_method: payment.id_payment_method,
+        amount: payment.amount,
+        reference: payment.reference || null,
+        date: new Date(),
+        created_by: userId,
+      } as any,
+      { transaction },
+    );
+  }
+
   async update(dto: UpdatePaymentDto): Promise<[number, Payment[]]> {
     return this.paymentModel.update(dto, {
       where: { id: dto.id },
@@ -91,6 +106,69 @@ export class PaymentService {
         disabled_by: dto.enable ? null : internal_user_id,
       },
       { where: { id: dto.id }, returning: true },
+    );
+  }
+
+  async createPayment(dto, sale, storeId, userId, royaltyResult, transaction) {
+    const { moneyAmount, pointsUsed } = royaltyResult;
+
+    // 🟢 Caso 1: solo puntos
+    if (pointsUsed > 0 && moneyAmount === 0) {
+      await this.createPaymentCustom(
+        {
+          ...dto.payment,
+          id_payment_method: 101,
+          amount: pointsUsed,
+        },
+        sale,
+        storeId,
+        userId,
+        transaction,
+      );
+      return;
+    }
+
+    // 🟡 Caso 2: mixto
+    if (pointsUsed > 0 && moneyAmount > 0) {
+      // puntos
+      await this.createPaymentCustom(
+        {
+          ...dto.payment,
+          id_payment_method: 101,
+          amount: pointsUsed,
+        },
+        sale,
+        storeId,
+        userId,
+        transaction,
+      );
+
+      // dinero
+      await this.createPaymentCustom(
+        {
+          ...dto.payment,
+          id_payment_method: dto.payment.id_payment_method,
+          amount: moneyAmount,
+        },
+        sale,
+        storeId,
+        userId,
+        transaction,
+      );
+
+      return;
+    }
+    // 🔵 Caso 3: normal
+    await this.createPaymentCustom(
+      {
+        ...dto.payment,
+        id_payment_method: dto.payment?.id_payment_method,
+        amount: moneyAmount,
+      },
+      sale,
+      storeId,
+      userId,
+      transaction,
     );
   }
 }

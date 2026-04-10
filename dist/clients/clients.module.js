@@ -18,6 +18,7 @@ const admin_entity_1 = require("../entities/admin.entity");
 const auth_module_1 = require("../auth/auth.module");
 const utils_module_1 = require("../utils/utils.module");
 const jobs_module_1 = require("../jobs/jobs.module");
+const royalty_module_1 = require("../royalty/royalty.module");
 let ClientsModule = class ClientsModule {
 };
 exports.ClientsModule = ClientsModule;
@@ -27,7 +28,8 @@ exports.ClientsModule = ClientsModule = __decorate([
             sequelize_1.SequelizeModule.forFeature([client_entity_1.Client, user_entity_1.User, profile_entity_1.Profile, admin_entity_1.Admin]),
             utils_module_1.UtilsModule,
             auth_module_1.AuthModule,
-            jobs_module_1.JobsModule
+            jobs_module_1.JobsModule,
+            royalty_module_1.RoyaltyModule
         ],
         controllers: [clients_controller_1.ClientsController],
         providers: [clients_service_1.ClientsService],

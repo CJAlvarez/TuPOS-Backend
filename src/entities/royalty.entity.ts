@@ -6,7 +6,6 @@ import {
   PrimaryKey,
   AutoIncrement,
   CreatedAt,
-  UpdatedAt,
 } from 'sequelize-typescript';
 
 @Table({
@@ -27,9 +26,9 @@ export class Royalty extends Model<Royalty> {
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   id_sale: number;
-  
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  id_status: number;
+
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  id_status?: number;
 
   @Column({ type: DataType.DECIMAL(15, 2), allowNull: false })
   points: number;
@@ -38,11 +37,15 @@ export class Royalty extends Model<Royalty> {
   created_by: number;
 
   @CreatedAt
-  @Column({ field: 'created_at', type: DataType.DATE, defaultValue: DataType.NOW })
+  @Column({
+    field: 'created_at',
+    type: DataType.DATE,
+    defaultValue: DataType.NOW,
+  })
   created_at: Date;
 
-  @Column({ type: DataType.DATE, allowNull: false })
-  expire_at: Date;
+  @Column({ type: DataType.DATE, allowNull: true })
+  expire_at?: Date | null;
 
   @Column({ type: DataType.DATE, allowNull: true })
   disabled_at?: Date | null;
@@ -64,5 +67,5 @@ export interface RoyaltyCreationAttributes {
   points: number;
   created_by: number;
   created_at?: Date;
-  expire_at: Date;
+  expire_at?: Date | null;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GiftCard } from '../entities/gift-card.entity';
 import { CreateGiftCardDto } from './dto/create-gift-card.dto';
@@ -7,12 +7,16 @@ import { GetGiftCardsQueryDto } from './dto/get-gift-cards-query.dto';
 import { UpdateGiftCardStatusDto } from './dto/update-gift-card-status.dto';
 import { Op } from 'sequelize';
 import { UtilsService } from 'src/utils/utils.service';
+import * as mathTools from 'src/utils/math-tools';
+import { GiftCardTransaction } from 'src/entities/gift-card-transaction.entity';
 
 @Injectable()
 export class GiftCardService {
   constructor(
     @InjectModel(GiftCard)
     private readonly giftCardModel: typeof GiftCard,
+    @InjectModel(GiftCardTransaction)
+    private readonly giftCardTransactionModel: typeof GiftCardTransaction,
     private readonly utilsService: UtilsService,
   ) {}
 
@@ -103,5 +107,43 @@ export class GiftCardService {
       },
       { where: { id: dto.id }, returning: true },
     );
+  }
+
+  async processGiftCards(giftCards, sale, userId, storeId, transaction) {
+    if (!giftCards?.length) return;
+
+    for (const gc of giftCards) {
+      const giftCard = await this.giftCardModel.findByPk(gc.id_gift_card, {
+        transaction,
+      });
+
+      if (!giftCard) {
+        throw new BadRequestException(
+          `GiftCard ${gc.id_gift_card} no encontrada`,
+        );
+      }
+
+      const balance = Number(giftCard.getDataValue('current_balance'));
+
+      if (balance < gc.amount_used) {
+        throw new BadRequestException(`Saldo insuficiente`);
+      }
+
+      const newBalance = mathTools.sub(balance, gc.amount_used);
+
+      await giftCard.update({ current_balance: newBalance }, { transaction });
+
+      await this.giftCardTransactionModel.create(
+        {
+          id_gift_card: giftCard.getDataValue('id'),
+          id_sale: sale.id,
+          id_store: storeId,
+          amount: gc.amount_used,
+          id_type: 2,
+          created_by: userId,
+        } as any,
+        { transaction },
+      );
+    }
   }
 }

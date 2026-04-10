@@ -4,11 +4,11 @@ export declare class Royalty extends Model<Royalty> {
     id_store: number;
     id_client: number;
     id_sale: number;
-    id_status: number;
+    id_status?: number;
     points: number;
     created_by: number;
     created_at: Date;
-    expire_at: Date;
+    expire_at?: Date | null;
     disabled_at?: Date | null;
     disabled_by?: number | null;
     deleted_at?: Date | null;
@@ -21,5 +21,5 @@ export interface RoyaltyCreationAttributes {
     points: number;
     created_by: number;
     created_at?: Date;
-    expire_at: Date;
+    expire_at?: Date | null;
 }

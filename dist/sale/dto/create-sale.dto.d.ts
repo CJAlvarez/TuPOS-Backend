@@ -16,6 +16,7 @@ export declare class PaymentDto {
     amount: number;
     reference?: string;
     notes?: string;
+    loyalty_points?: number;
 }
 export declare class CreateSaleDto {
     id_client?: number | null;

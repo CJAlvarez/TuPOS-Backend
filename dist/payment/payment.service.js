@@ -60,6 +60,17 @@ let PaymentService = class PaymentService {
         dto.id_store = internal_store_id;
         return this.paymentModel.create(dto);
     }
+    async createPaymentCustom(payment, sale, storeId, userId, transaction) {
+        await this.paymentModel.create({
+            id_sale: sale.id,
+            id_store: storeId,
+            id_payment_method: payment.id_payment_method,
+            amount: payment.amount,
+            reference: payment.reference || null,
+            date: new Date(),
+            created_by: userId,
+        }, { transaction });
+    }
     async update(dto) {
         return this.paymentModel.update(dto, {
             where: { id: dto.id },
@@ -83,6 +94,35 @@ let PaymentService = class PaymentService {
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
         }, { where: { id: dto.id }, returning: true });
+    }
+    async createPayment(dto, sale, storeId, userId, royaltyResult, transaction) {
+        const { moneyAmount, pointsUsed } = royaltyResult;
+        if (pointsUsed > 0 && moneyAmount === 0) {
+            await this.createPaymentCustom({
+                ...dto.payment,
+                id_payment_method: 101,
+                amount: pointsUsed,
+            }, sale, storeId, userId, transaction);
+            return;
+        }
+        if (pointsUsed > 0 && moneyAmount > 0) {
+            await this.createPaymentCustom({
+                ...dto.payment,
+                id_payment_method: 101,
+                amount: pointsUsed,
+            }, sale, storeId, userId, transaction);
+            await this.createPaymentCustom({
+                ...dto.payment,
+                id_payment_method: dto.payment.id_payment_method,
+                amount: moneyAmount,
+            }, sale, storeId, userId, transaction);
+            return;
+        }
+        await this.createPaymentCustom({
+            ...dto.payment,
+            id_payment_method: dto.payment?.id_payment_method,
+            amount: moneyAmount,
+        }, sale, storeId, userId, transaction);
     }
 };
 exports.PaymentService = PaymentService;

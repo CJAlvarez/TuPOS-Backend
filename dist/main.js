@@ -8,6 +8,10 @@ function setupRailwayAutoShutdown() {
     if (!process.env.RAILWAY_ENVIRONMENT_NAME) {
         return;
     }
+    if (!process.env.ACTIVE_HOURS) {
+        console.log(`🚀 [Railway] Servicio iniciado. Permanecerá activo indefinidamente.`);
+        return;
+    }
     const activeHours = parseInt(process.env.ACTIVE_HOURS || '11', 10);
     const activeTimeMs = activeHours * 60 * 60 * 1000;
     console.log(`🚀 [Railway] Servicio iniciado. Permanecerá activo por ${activeHours} horas.`);

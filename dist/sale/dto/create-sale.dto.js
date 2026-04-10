@@ -79,6 +79,7 @@ class PaymentDto {
     amount;
     reference;
     notes;
+    loyalty_points;
 }
 exports.PaymentDto = PaymentDto;
 __decorate([
@@ -103,6 +104,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], PaymentDto.prototype, "notes", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Puntos de lealtad utilizados' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], PaymentDto.prototype, "loyalty_points", void 0);
 class CreateSaleDto {
     id_client;
     subtotal;

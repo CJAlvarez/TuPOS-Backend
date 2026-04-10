@@ -11,6 +11,7 @@ import { UpdateClientStatusDto } from './dto/update-client-status.dto';
 import { UtilsService } from 'src/utils/utils.service';
 import { JobsService } from 'src/jobs/jobs.service';
 import { Sequelize } from 'sequelize-typescript';
+import { RoyaltyService } from 'src/royalty/royalty.service';
 
 @Injectable()
 export class ClientsService {
@@ -20,6 +21,7 @@ export class ClientsService {
     @InjectModel(Profile) private readonly profileModel: typeof Profile,
     private readonly jobsService: JobsService,
     private readonly utilsService: UtilsService,
+    private readonly royaltyService: RoyaltyService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -56,9 +58,15 @@ export class ClientsService {
       limit: paginate.limit,
       offset: paginate.offset,
     });
+
+    const list = await Promise.all(rows.map(async (row) => ({
+      ...row.toJSON(),
+      loyalty_points: row.getDataValue('loyalty_eligible') ? await this.royaltyService.getAvailablePoints(row.getDataValue('id_user'), null) : 0,
+    })));
+
     return {
       count: total,
-      list: rows.map((row) => row.toJSON()),
+      list,
       skip: paginate.skip,
     };
   }
@@ -209,8 +217,7 @@ export class ClientsService {
           subject: body.enable ? 'Usuario Habilitado' : 'Usuario Deshabilitado',
           replacements: {
             logo_dark: 'https://tuposhn.com/assets/images/logo-dark2-sm.png',
-            logo_light:
-              'https://tuposhn.com/assets/images/logotipo-blanco.png',
+            logo_light: 'https://tuposhn.com/assets/images/logotipo-blanco.png',
             content: [
               {
                 type: 'normal',

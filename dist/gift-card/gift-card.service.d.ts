@@ -4,10 +4,12 @@ import { UpdateGiftCardDto } from './dto/update-gift-card.dto';
 import { GetGiftCardsQueryDto } from './dto/get-gift-cards-query.dto';
 import { UpdateGiftCardStatusDto } from './dto/update-gift-card-status.dto';
 import { UtilsService } from 'src/utils/utils.service';
+import { GiftCardTransaction } from 'src/entities/gift-card-transaction.entity';
 export declare class GiftCardService {
     private readonly giftCardModel;
+    private readonly giftCardTransactionModel;
     private readonly utilsService;
-    constructor(giftCardModel: typeof GiftCard, utilsService: UtilsService);
+    constructor(giftCardModel: typeof GiftCard, giftCardTransactionModel: typeof GiftCardTransaction, utilsService: UtilsService);
     findAll(query: GetGiftCardsQueryDto, id_store?: number): Promise<{
         count: number;
         list: GiftCard[];
@@ -18,4 +20,5 @@ export declare class GiftCardService {
     update(dto: UpdateGiftCardDto): Promise<[number, GiftCard[]]>;
     remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateGiftCardStatusDto): Promise<[number, GiftCard[]]>;
+    processGiftCards(giftCards: any, sale: any, userId: any, storeId: any, transaction: any): Promise<void>;
 }

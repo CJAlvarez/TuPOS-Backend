@@ -15,7 +15,9 @@ export declare class PaymentService {
     }>;
     findOne(id: number): Promise<Payment | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreatePaymentDto): Promise<Payment>;
+    createPaymentCustom(payment: any, sale: any, storeId: any, userId: any, transaction: any): Promise<void>;
     update(dto: UpdatePaymentDto): Promise<[number, Payment[]]>;
     remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdatePaymentStatusDto): Promise<[number, Payment[]]>;
+    createPayment(dto: any, sale: any, storeId: any, userId: any, royaltyResult: any, transaction: any): Promise<void>;
 }

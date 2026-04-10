@@ -15,7 +15,6 @@ const class_validator_1 = require("class-validator");
 class CreateRoyaltyDto {
     id_client;
     id_sale;
-    id_status;
     points;
     created_by;
     id_store;
@@ -35,11 +34,6 @@ __decorate([
 ], CreateRoyaltyDto.prototype, "id_sale", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsInt)(),
-    __metadata("design:type", Number)
-], CreateRoyaltyDto.prototype, "id_status", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateRoyaltyDto.prototype, "points", void 0);
@@ -55,7 +49,8 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateRoyaltyDto.prototype, "id_store", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDate)(),
     __metadata("design:type", Date)
 ], CreateRoyaltyDto.prototype, "expire_at", void 0);

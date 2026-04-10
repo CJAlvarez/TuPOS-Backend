@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Royalty.prototype, "id_sale", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true }),
     __metadata("design:type", Number)
 ], Royalty.prototype, "id_status", void 0);
 __decorate([
@@ -58,12 +58,16 @@ __decorate([
 ], Royalty.prototype, "created_by", void 0);
 __decorate([
     sequelize_typescript_1.CreatedAt,
-    (0, sequelize_typescript_1.Column)({ field: 'created_at', type: sequelize_typescript_1.DataType.DATE, defaultValue: sequelize_typescript_1.DataType.NOW }),
+    (0, sequelize_typescript_1.Column)({
+        field: 'created_at',
+        type: sequelize_typescript_1.DataType.DATE,
+        defaultValue: sequelize_typescript_1.DataType.NOW,
+    }),
     __metadata("design:type", Date)
 ], Royalty.prototype, "created_at", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE, allowNull: false }),
-    __metadata("design:type", Date)
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE, allowNull: true }),
+    __metadata("design:type", Object)
 ], Royalty.prototype, "expire_at", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DATE, allowNull: true }),
