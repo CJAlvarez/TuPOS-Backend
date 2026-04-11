@@ -62,6 +62,7 @@ let SaleService = class SaleService {
             where,
             limit: paginate.limit,
             offset: paginate.offset,
+            order: [['date', 'DESC']],
         });
         return {
             count: total,
