@@ -1,9 +1,12 @@
 import { Report } from '../entities/report.entity';
-import { Invoice } from '../entities/invoice.entity';
 import { Sequelize } from 'sequelize-typescript';
+import { DailySalesRequestDto, DailySalesResponseDto } from './dto/daily-sales-reports.dto';
 export declare class ReportsService {
     private reportModel;
-    private invoiceModel;
     private sequelize;
-    constructor(reportModel: typeof Report, invoiceModel: typeof Invoice, sequelize: Sequelize);
+    constructor(reportModel: typeof Report, sequelize: Sequelize);
+    private createBaseResponse;
+    getDailySales(dto: DailySalesRequestDto, internal_store_id: number): Promise<DailySalesResponseDto>;
+    getInventoryLow(dto: any, internal_store_id: number): Promise<any>;
+    getInventoryExpiring(dto: any, internal_store_id: number): Promise<any>;
 }

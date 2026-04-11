@@ -20,5 +20,8 @@ var ReportCode;
     ReportCode["LATEST_TRANSACTIONS"] = "LATEST_TRANSACTIONS";
     ReportCode["TOP_TRANSACTIONS"] = "TOP_TRANSACTIONS";
     ReportCode["LATEST_INVOICES"] = "LATEST_INVOICES";
+    ReportCode["DAILY_SALES"] = "DAILY_SALES";
+    ReportCode["INVENTORY_LOW"] = "INVENTORY_LOW";
+    ReportCode["INVENTORY_EXPIRING"] = "INVENTORY_EXPIRING";
 })(ReportCode || (exports.ReportCode = ReportCode = {}));
 //# sourceMappingURL=report.enum.js.map

@@ -9,6 +9,7 @@ Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores
 ## [v26.0.4] 2026-04-08
 ### Added
 - Se deja funcional el módulo de Lealtad(Royalty).
+- Se agregan los reportes inventory_low_reports, inventory_expiring_reports y daily_sales_reports.
 
 ### Changed
 - Se cambia el Cron de Jobs a que sólo se ejecute si la variable EXECUTE_JOBS_EVERY existe, esta define cada cuantos minutos se ejecutan los jobs.
