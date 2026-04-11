@@ -2,7 +2,7 @@ import { Model } from 'sequelize-typescript';
 export declare class Royalty extends Model<Royalty> {
     id: number;
     id_store: number;
-    id_client: number;
+    id_client?: number | null;
     id_sale: number;
     id_status?: number;
     points: number;
