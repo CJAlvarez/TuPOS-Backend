@@ -21,8 +21,8 @@ export class Royalty extends Model<Royalty> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   id_store: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  id_client: number;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  id_client?: number|null;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   id_sale: number;
