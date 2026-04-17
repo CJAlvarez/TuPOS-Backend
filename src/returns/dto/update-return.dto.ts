@@ -11,13 +11,15 @@ export class UpdateReturnDto {
   @IsInt()
   id_sale: number;
 
-  @ApiProperty({ description: 'ID del cliente' })
+  @ApiProperty({ description: 'ID del cliente', required: false })
+  @IsOptional()
   @IsInt()
-  id_client: number;
+  id_client?: number;
 
-  @ApiProperty({ description: 'ID de la terminal' })
+  @ApiProperty({ description: 'ID de la terminal', required: false })
+  @IsOptional()
   @IsInt()
-  id_terminal: number;
+  id_terminal?: number;
 
   @ApiProperty({ description: 'ID de la factura', required: false })
   @IsOptional()
@@ -38,7 +40,8 @@ export class UpdateReturnDto {
   @IsString()
   reason?: string;
 
-  @ApiProperty({ description: 'Estado de la devolución' })
+  @ApiProperty({ description: 'Estado de la devolución', required: false })
+  @IsOptional()
   @IsString()
-  status: string;
+  status?: string;
 }

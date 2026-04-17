@@ -33,6 +33,9 @@ let ReturnsService = class ReturnsService {
         this.utilsService = utilsService;
     }
     async create(dto, internal_user_id, internal_store_id) {
+        if (!Array.isArray(dto.return_items) || dto.return_items.length === 0) {
+            throw new common_1.BadRequestException('Debe seleccionar al menos un producto para la devolucion');
+        }
         const date = new Date(dto.date);
         const returns = await this.returnModel.create({
             ...dto,
@@ -40,11 +43,20 @@ let ReturnsService = class ReturnsService {
             created_by: internal_user_id,
             id_store: internal_store_id,
         });
-        this.returnItemModel.bulkCreate(dto.return_items.map((item) => ({
-            id_return: returns.getDataValue('id'),
-            id_product: item,
-            id_sale_item: dto._return_items.find((i) => i.id_product === item)?.id || null,
-        })));
+        const payload = dto.return_items.map((item) => {
+            const matched = dto._return_items?.find((i) => i?.id_product === item || i?.id === item);
+            const id_sale_item = matched?.id ?? item;
+            const id_product = matched?.id_product ?? item;
+            if (!id_sale_item || !id_product) {
+                throw new common_1.BadRequestException(`No se pudo resolver el item de venta para el producto/item ${item}`);
+            }
+            return {
+                id_return: returns.getDataValue('id'),
+                id_product,
+                id_sale_item,
+            };
+        });
+        await this.returnItemModel.bulkCreate(payload);
         return returns;
     }
     async findAll(query, id_store) {
@@ -86,11 +98,38 @@ let ReturnsService = class ReturnsService {
     }
     async getProducts(query) {
         const { id_sale, insert } = query;
+        console.log('Query getProducts:', query);
         const where = {};
         if (id_sale)
             where.id_sale = id_sale;
         if (!insert)
             where.deleted_at = { [sequelize_2.Op.is]: null };
+        if (id_sale && insert) {
+            const returnedSaleItems = await this.returnItemModel.findAll({
+                attributes: ['id_sale_item'],
+                where: {
+                    deleted_at: { [sequelize_2.Op.is]: null },
+                },
+                include: [
+                    {
+                        model: return_entity_1.Return,
+                        required: true,
+                        attributes: [],
+                        where: {
+                            id_sale,
+                            deleted_at: { [sequelize_2.Op.is]: null },
+                        },
+                    },
+                ],
+                raw: true,
+            });
+            const returnedSaleItemIds = returnedSaleItems
+                .map((item) => item.id_sale_item)
+                .filter((id) => !!id);
+            if (returnedSaleItemIds.length) {
+                where.id = { [sequelize_2.Op.notIn]: returnedSaleItemIds };
+            }
+        }
         const rows = await this.saleItemModel.findAll({
             where,
             order: [['id', 'ASC']],

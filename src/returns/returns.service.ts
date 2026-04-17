@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Return } from '../entities/return.entity';
@@ -27,6 +27,10 @@ export class ReturnsService {
     internal_user_id: number,
     internal_store_id: number,
   ) {
+    if (!Array.isArray(dto.return_items) || dto.return_items.length === 0) {
+      throw new BadRequestException('Debe seleccionar al menos un producto para la devolucion');
+    }
+
     const date = new Date(dto.date);
     const returns = await this.returnModel.create({
       ...dto,
@@ -35,17 +39,23 @@ export class ReturnsService {
       id_store: internal_store_id,
     } as any);
 
-    this.returnItemModel.bulkCreate(
-      dto.return_items.map(
-        (item) =>
-          ({
-            id_return: returns.getDataValue('id'),
-            id_product: item,
-            id_sale_item:
-              dto._return_items.find((i) => i.id_product === item)?.id || null,
-          }) as any,
-      ),
-    );
+    const payload = dto.return_items.map((item) => {
+      const matched = dto._return_items?.find((i) => i?.id_product === item || i?.id === item);
+      const id_sale_item = matched?.id ?? item;
+      const id_product = matched?.id_product ?? item;
+
+      if (!id_sale_item || !id_product) {
+        throw new BadRequestException(`No se pudo resolver el item de venta para el producto/item ${item}`);
+      }
+
+      return {
+        id_return: returns.getDataValue('id'),
+        id_product,
+        id_sale_item,
+      } as any;
+    });
+
+    await this.returnItemModel.bulkCreate(payload);
 
     return returns;
   }
@@ -91,9 +101,40 @@ export class ReturnsService {
 
   async getProducts(query: GetProductsQueryDto) {
     const { id_sale, insert } = query;
+    console.log('Query getProducts:', query);
     const where: any = {};
     if (id_sale) where.id_sale = id_sale;
     if (!insert) where.deleted_at = { [Op.is]: null };
+
+    if (id_sale && insert) {
+      const returnedSaleItems = await this.returnItemModel.findAll({
+        attributes: ['id_sale_item'],
+        where: {
+          deleted_at: { [Op.is]: null },
+        },
+        include: [
+          {
+            model: Return,
+            required: true,
+            attributes: [],
+            where: {
+              id_sale,
+              deleted_at: { [Op.is]: null },
+            },
+          },
+        ],
+        raw: true,
+      });
+
+      const returnedSaleItemIds = returnedSaleItems
+        .map((item: any) => item.id_sale_item)
+        .filter((id: any) => !!id);
+
+      if (returnedSaleItemIds.length) {
+        where.id = { [Op.notIn]: returnedSaleItemIds };
+      }
+    }
+
     const rows = await this.saleItemModel.findAll({
       where,
       order: [['id', 'ASC']],

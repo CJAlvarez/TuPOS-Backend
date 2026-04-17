@@ -1,19 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsString, IsDateString, IsArray, ArrayMinSize } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateReturnDto {
   @ApiProperty({ description: 'ID de la venta' })
   @IsInt()
-  id_sale: number;
+  id_sale!: number;
 
-  @ApiProperty({ description: 'ID del cliente' })
+  @ApiProperty({ description: 'ID del cliente', required: false })
+  @IsOptional()
   @IsInt()
-  id_client: number;
+  id_client?: number;
 
-  @ApiProperty({ description: 'ID de la terminal' })
+  @ApiProperty({ description: 'ID de la terminal', required: false })
+  @IsOptional()
   @IsInt()
-  id_terminal: number;
+  id_terminal?: number;
 
   @ApiProperty({ description: 'ID de la factura', required: false })
   @IsOptional()
@@ -22,21 +24,22 @@ export class CreateReturnDto {
 
   @ApiProperty({ description: 'Fecha de la devolución' })
   @IsDateString()
-  date: string;
+  date!: string;
 
   @ApiProperty({ description: 'Total de la devolución' })
   @Type(() => Number)
   @IsNumber()
-  total: number;
+  total!: number;
 
   @ApiProperty({ description: 'Razón de la devolución', required: false })
   @IsOptional()
   @IsString()
   reason?: string;
 
-  @ApiProperty({ description: 'Estado de la devolución' })
+  @ApiProperty({ description: 'Estado de la devolución', required: false })
+  @IsOptional()
   @IsString()
-  status: string;
+  status?: string;
 
   @ApiProperty({ description: 'ID de la tienda', required: false })
   @IsOptional()
@@ -44,8 +47,10 @@ export class CreateReturnDto {
   id_store?: number;
 
   @ApiProperty({ description: 'Items de la devolución' })
-  return_items: number[];
+  @IsArray()
+  @ArrayMinSize(1)
+  return_items!: number[];
 
   @ApiProperty({ description: 'Items de la devolución RAW' })
-  _return_items: any[];
+  _return_items!: any[];
 }

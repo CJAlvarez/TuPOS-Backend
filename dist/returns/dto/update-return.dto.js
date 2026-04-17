@@ -36,12 +36,14 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdateReturnDto.prototype, "id_sale", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'ID del cliente' }),
+    (0, swagger_1.ApiProperty)({ description: 'ID del cliente', required: false }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], UpdateReturnDto.prototype, "id_client", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'ID de la terminal' }),
+    (0, swagger_1.ApiProperty)({ description: 'ID de la terminal', required: false }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], UpdateReturnDto.prototype, "id_terminal", void 0);
@@ -69,7 +71,8 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateReturnDto.prototype, "reason", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Estado de la devolución' }),
+    (0, swagger_1.ApiProperty)({ description: 'Estado de la devolución', required: false }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateReturnDto.prototype, "status", void 0);
