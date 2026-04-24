@@ -76,7 +76,7 @@ export class InventoryService {
     return this.inventoryModel.destroy({ where: { id } });
   }
 
-  async handleStock(item, transaction) {
+  async handleStock(item, idStore: number, transaction) {
     const product = await this.productModel.findByPk(item.id_product, {
       transaction,
     });
@@ -91,6 +91,7 @@ export class InventoryService {
 
     const inventories = await this.getAvailableInventories(
       item.id_product,
+      idStore,
       transaction,
     );
 
@@ -100,7 +101,12 @@ export class InventoryService {
       product.getDataValue('name'),
     );
 
-    await this.applyFifo(inventories, unitsToDeduct, transaction);
+    const consumed = await this.applyFifo(inventories, unitsToDeduct, transaction);
+
+    return {
+      inventoryIds: consumed.map((c) => c.id),
+      consumed,
+    };
   }
 
   private calculateUnits(item, product) {
@@ -110,10 +116,11 @@ export class InventoryService {
     return item.quantity;
   }
 
-  private async getAvailableInventories(productId, transaction) {
+  private async getAvailableInventories(productId, idStore: number, transaction) {
     return this.inventoryModel.findAll({
       where: {
         id_product: productId,
+        id_store: idStore,
         unit_quantity: { [Op.gt]: 0 },
         [Op.or]: [
           { expiration_date: { [Op.gte]: new Date() } },
@@ -145,6 +152,7 @@ export class InventoryService {
     let remaining = quantity;
 
     const updates: { id: number; newQty: number }[] = [];
+    const consumed: { id: number; quantity: number }[] = [];
 
     for (const inv of inventories) {
       if (remaining <= 0) break;
@@ -157,12 +165,18 @@ export class InventoryService {
         newQty: current - take,
       });
 
+      consumed.push({
+        id: inv.getDataValue('id'),
+        quantity: take,
+      });
+
       remaining -= take;
     }
 
-    if (!updates.length) return;
+    if (!updates.length) return consumed;
 
     await this.bulkUpdateInventories(updates, transaction);
+    return consumed;
   }
 
   private async bulkUpdateInventories(updates, transaction) {

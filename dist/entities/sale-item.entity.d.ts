@@ -1,11 +1,14 @@
 import { Model } from 'sequelize-typescript';
 import { Product } from './product.entity';
+import { Inventory } from './inventory.entity';
 export declare class SaleItem extends Model<SaleItem> {
     id: number;
     id_store: number;
     id_sale: number;
     id_product: number;
     product: Product;
+    id_inventory?: number;
+    inventory?: Inventory;
     quantity: number;
     price: number;
     discount: number;
@@ -21,6 +24,7 @@ export declare class SaleItem extends Model<SaleItem> {
 export interface SaleItemCreationAttributes {
     id_sale: number;
     id_product: number;
+    id_inventory?: number;
     quantity: number;
     price: number;
     discount: number;

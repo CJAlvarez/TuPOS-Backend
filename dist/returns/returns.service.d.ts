@@ -1,3 +1,4 @@
+import { Sequelize } from 'sequelize-typescript';
 import { Return } from '../entities/return.entity';
 import { CreateReturnDto } from './dto/create-return.dto';
 import { UpdateReturnDto } from './dto/update-return.dto';
@@ -7,12 +8,15 @@ import { UtilsService } from '../utils/utils.service';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
 import { SaleItem } from 'src/entities/sale-item.entity';
 import { ReturnItem } from 'src/entities/return-item.entity';
+import { Inventory } from 'src/entities/inventory.entity';
 export declare class ReturnsService {
     private readonly returnModel;
     private readonly saleItemModel;
     private readonly returnItemModel;
+    private readonly inventoryModel;
     private readonly utilsService;
-    constructor(returnModel: typeof Return, saleItemModel: typeof SaleItem, returnItemModel: typeof ReturnItem, utilsService: UtilsService);
+    private readonly sequelize;
+    constructor(returnModel: typeof Return, saleItemModel: typeof SaleItem, returnItemModel: typeof ReturnItem, inventoryModel: typeof Inventory, utilsService: UtilsService, sequelize: Sequelize);
     create(dto: CreateReturnDto, internal_user_id: number, internal_store_id: number): Promise<Return>;
     findAll(query: GetReturnsQueryDto, id_store?: number): Promise<{
         count: number;
@@ -24,4 +28,12 @@ export declare class ReturnsService {
     update(dto: UpdateReturnDto, internal_user_id: number): Promise<Return>;
     remove(internal_user_id: number, id: number): Promise<any>;
     updateStatus(internal_user_id: number, dto: UpdateReturnStatusDto): Promise<[number, Return[]]>;
+    private validateReturnItems;
+    private createReturnEntity;
+    private buildReturnItemsPayload;
+    private getSaleItemsMapForReturnItems;
+    private restoreInventoryForReturnItems;
+    private restoreToLinkedInventory;
+    private restoreToEachInventory;
+    private createInventoryRecord;
 }

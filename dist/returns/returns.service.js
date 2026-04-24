@@ -16,48 +16,43 @@ exports.ReturnsService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const sequelize_2 = require("sequelize");
+const sequelize_typescript_1 = require("sequelize-typescript");
 const return_entity_1 = require("../entities/return.entity");
 const utils_service_1 = require("../utils/utils.service");
 const sale_item_entity_1 = require("../entities/sale-item.entity");
 const product_entity_1 = require("../entities/product.entity");
 const return_item_entity_1 = require("../entities/return-item.entity");
+const inventory_entity_1 = require("../entities/inventory.entity");
 let ReturnsService = class ReturnsService {
     returnModel;
     saleItemModel;
     returnItemModel;
+    inventoryModel;
     utilsService;
-    constructor(returnModel, saleItemModel, returnItemModel, utilsService) {
+    sequelize;
+    constructor(returnModel, saleItemModel, returnItemModel, inventoryModel, utilsService, sequelize) {
         this.returnModel = returnModel;
         this.saleItemModel = saleItemModel;
         this.returnItemModel = returnItemModel;
+        this.inventoryModel = inventoryModel;
         this.utilsService = utilsService;
+        this.sequelize = sequelize;
     }
     async create(dto, internal_user_id, internal_store_id) {
-        if (!Array.isArray(dto.return_items) || dto.return_items.length === 0) {
-            throw new common_1.BadRequestException('Debe seleccionar al menos un producto para la devolucion');
+        this.validateReturnItems(dto);
+        const transaction = await this.sequelize.transaction();
+        try {
+            const returns = await this.createReturnEntity(dto, internal_user_id, internal_store_id, transaction);
+            const payload = this.buildReturnItemsPayload(dto, returns.getDataValue('id'));
+            await this.returnItemModel.bulkCreate(payload, { transaction });
+            await this.restoreInventoryForReturnItems(payload, dto.id_sale, internal_store_id, internal_user_id, transaction);
+            await transaction.commit();
+            return returns;
         }
-        const date = new Date(dto.date);
-        const returns = await this.returnModel.create({
-            ...dto,
-            date,
-            created_by: internal_user_id,
-            id_store: internal_store_id,
-        });
-        const payload = dto.return_items.map((item) => {
-            const matched = dto._return_items?.find((i) => i?.id_product === item || i?.id === item);
-            const id_sale_item = matched?.id ?? item;
-            const id_product = matched?.id_product ?? item;
-            if (!id_sale_item || !id_product) {
-                throw new common_1.BadRequestException(`No se pudo resolver el item de venta para el producto/item ${item}`);
-            }
-            return {
-                id_return: returns.getDataValue('id'),
-                id_product,
-                id_sale_item,
-            };
-        });
-        await this.returnItemModel.bulkCreate(payload);
-        return returns;
+        catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     }
     async findAll(query, id_store) {
         const { search_word, limit = 10, skip = 0, id_sale } = query;
@@ -86,7 +81,7 @@ let ReturnsService = class ReturnsService {
                     model: return_item_entity_1.ReturnItem,
                     required: false,
                     as: 'return_items',
-                    attributes: ['id', 'id_product'],
+                    attributes: ['id', 'id_product', 'id_sale_item'],
                 },
             ],
         });
@@ -98,7 +93,6 @@ let ReturnsService = class ReturnsService {
     }
     async getProducts(query) {
         const { id_sale, insert } = query;
-        console.log('Query getProducts:', query);
         const where = {};
         if (id_sale)
             where.id_sale = id_sale;
@@ -187,6 +181,110 @@ let ReturnsService = class ReturnsService {
             disabled_by: dto.enable ? null : internal_user_id,
         }, { where: { id: dto.id }, returning: true });
     }
+    validateReturnItems(dto) {
+        if (!Array.isArray(dto.return_items) || dto.return_items.length === 0) {
+            throw new common_1.BadRequestException('Debe seleccionar al menos un producto para la devolucion');
+        }
+    }
+    async createReturnEntity(dto, internal_user_id, internal_store_id, transaction) {
+        const date = new Date(dto.date);
+        return this.returnModel.create({
+            ...dto,
+            date,
+            created_by: internal_user_id,
+            id_store: internal_store_id,
+        }, { transaction });
+    }
+    buildReturnItemsPayload(dto, idReturn) {
+        return dto.return_items.map((item) => {
+            const matched = dto._return_items?.find((i) => i?.id_product === item || i?.id === item);
+            const id_sale_item = matched?.id ?? item;
+            const id_product = matched?.id_product ?? item;
+            if (!id_sale_item || !id_product) {
+                throw new common_1.BadRequestException(`No se pudo resolver el item de venta para el producto/item ${item}`);
+            }
+            return {
+                id_return: idReturn,
+                id_product,
+                id_sale_item,
+            };
+        });
+    }
+    async getSaleItemsMapForReturnItems(payload, idSale, transaction) {
+        const saleItemIds = payload.map((item) => item.id_sale_item);
+        const saleItems = await this.saleItemModel.findAll({
+            where: {
+                id: { [sequelize_2.Op.in]: saleItemIds },
+                id_sale: idSale,
+            },
+            transaction,
+        });
+        const saleItemsMap = new Map();
+        saleItems.forEach((item) => saleItemsMap.set(item.getDataValue('id'), item));
+        return saleItemsMap;
+    }
+    async restoreInventoryForReturnItems(payload, idSale, internal_store_id, internal_user_id, transaction) {
+        const saleItemsMap = await this.getSaleItemsMapForReturnItems(payload, idSale, transaction);
+        for (const item of payload) {
+            const saleItem = saleItemsMap.get(item.id_sale_item);
+            if (!saleItem) {
+                throw new common_1.BadRequestException(`El item de venta ${item.id_sale_item} no pertenece a la venta ${idSale}`);
+            }
+            const quantityToRestore = Number(saleItem.getDataValue('quantity') || 0);
+            if (!quantityToRestore)
+                continue;
+            const idInventory = saleItem.getDataValue('id_inventory');
+            if (idInventory) {
+                await this.restoreToLinkedInventory(idInventory, internal_store_id, item.id_product, quantityToRestore, internal_user_id, transaction);
+            }
+            else {
+                await this.restoreToEachInventory(internal_store_id, item.id_product, quantityToRestore, internal_user_id, transaction);
+            }
+        }
+    }
+    async restoreToLinkedInventory(idInventory, idStore, idProduct, quantityToRestore, createdBy, transaction) {
+        const inventory = await this.inventoryModel.findOne({
+            where: {
+                id: idInventory,
+                id_store: idStore,
+                id_product: idProduct,
+            },
+            transaction,
+        });
+        if (inventory) {
+            await inventory.update({
+                unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
+            }, { transaction });
+            return;
+        }
+        await this.createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction);
+    }
+    async restoreToEachInventory(idStore, idProduct, quantityToRestore, createdBy, transaction) {
+        const inventories = await this.inventoryModel.findAll({
+            where: {
+                id_store: idStore,
+                id_product: idProduct,
+            },
+            transaction,
+        });
+        if (!inventories.length) {
+            await this.createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction);
+            return;
+        }
+        for (const inventory of inventories) {
+            await inventory.update({
+                unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
+            }, { transaction });
+        }
+    }
+    async createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction) {
+        await this.inventoryModel.create({
+            id_store: idStore,
+            id_product: idProduct,
+            unit_quantity: quantityToRestore,
+            created_by: createdBy,
+        }, { transaction });
+    }
 };
 exports.ReturnsService = ReturnsService;
 exports.ReturnsService = ReturnsService = __decorate([
@@ -194,6 +292,8 @@ exports.ReturnsService = ReturnsService = __decorate([
     __param(0, (0, sequelize_1.InjectModel)(return_entity_1.Return)),
     __param(1, (0, sequelize_1.InjectModel)(sale_item_entity_1.SaleItem)),
     __param(2, (0, sequelize_1.InjectModel)(return_item_entity_1.ReturnItem)),
-    __metadata("design:paramtypes", [Object, Object, Object, utils_service_1.UtilsService])
+    __param(3, (0, sequelize_1.InjectModel)(inventory_entity_1.Inventory)),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, utils_service_1.UtilsService,
+        sequelize_typescript_1.Sequelize])
 ], ReturnsService);
 //# sourceMappingURL=returns.service.js.map

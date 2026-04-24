@@ -183,14 +183,16 @@ export class SaleService {
     if (!items?.length) return;
 
     for (const item of items) {
+      const stockTrace = await this.inventoryService.handleStock(item, storeId, transaction);
+      const idInventory = stockTrace.inventoryIds.length === 1 ? stockTrace.inventoryIds[0] : null;
+
       await this.saleItemService.createCustom(
         sale.id,
         item,
         storeId,
         transaction,
+        idInventory,
       );
-
-      await this.inventoryService.handleStock(item, transaction);
     }
   }
 

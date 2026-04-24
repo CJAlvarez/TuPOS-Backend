@@ -12,11 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SaleItem = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const product_entity_1 = require("./product.entity");
+const inventory_entity_1 = require("./inventory.entity");
 let SaleItem = class SaleItem extends sequelize_typescript_1.Model {
     id_store;
     id_sale;
     id_product;
     product;
+    id_inventory;
+    inventory;
     quantity;
     price;
     discount;
@@ -53,6 +56,15 @@ __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => product_entity_1.Product),
     __metadata("design:type", product_entity_1.Product)
 ], SaleItem.prototype, "product", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => inventory_entity_1.Inventory),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: true }),
+    __metadata("design:type", Number)
+], SaleItem.prototype, "id_inventory", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => inventory_entity_1.Inventory),
+    __metadata("design:type", inventory_entity_1.Inventory)
+], SaleItem.prototype, "inventory", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false, defaultValue: 1 }),
     __metadata("design:type", Number)

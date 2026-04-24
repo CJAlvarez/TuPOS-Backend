@@ -20,7 +20,13 @@ export declare class InventoryService {
     create(internal_user_id: number, internal_store_id: number, dto: CreateInventoryDto): Promise<Inventory>;
     update(dto: UpdateInventoryDto): Promise<[number, Inventory[]]>;
     remove(internal_user_id: number, id: number): Promise<number>;
-    handleStock(item: any, transaction: any): Promise<void>;
+    handleStock(item: any, idStore: number, transaction: any): Promise<{
+        inventoryIds: number[];
+        consumed: {
+            id: number;
+            quantity: number;
+        }[];
+    }>;
     private calculateUnits;
     private getAvailableInventories;
     private validateStock;
