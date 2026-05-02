@@ -6,13 +6,13 @@ export declare class InvoiceConfigController {
     private readonly service;
     constructor(service: InvoiceConfigService);
     findAll(req: any): Promise<InvoiceConfig | null>;
-    findOne(id: number): Promise<InvoiceConfig>;
+    findOne(req: any, id: number): Promise<InvoiceConfig>;
     create(req: any, dto: CreateInvoiceConfigDto): Promise<InvoiceConfig>;
-    update(dto: UpdateInvoiceConfigDto): Promise<{
+    update(req: any, dto: UpdateInvoiceConfigDto): Promise<{
         title: string;
         message: string;
     }>;
-    remove(id: number): Promise<{
+    remove(req: any, id: number): Promise<{
         message: string;
     }>;
 }

@@ -38,8 +38,8 @@ export class InvoicesController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener detalle de factura' })
   @ApiResponse({ status: 200, type: Invoice })
-  findOne(@Param('id') id: number) {
-    return this.service.findOne(id);
+  findOne(@Request() req, @Param('id') id: number) {
+    return this.service.findOne(id, req.internal_store_id);
   }
 
   @Post()
@@ -52,8 +52,8 @@ export class InvoicesController {
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar factura' })
   @ApiResponse({ status: 200, type: Invoice })
-  update(@Param('id') id: number, @Body() dto: UpdateInvoiceDto) {
-    return this.service.update(id, dto);
+  update(@Request() req, @Param('id') id: number, @Body() dto: UpdateInvoiceDto) {
+    return this.service.update(id, dto, req.internal_store_id);
   }
 
   @Delete(':id')
@@ -62,7 +62,7 @@ export class InvoicesController {
     status: 200,
     schema: { example: { message: 'Factura eliminada' } },
   })
-  remove(@Param('id') id: number) {
-    return this.service.remove(id);
+  remove(@Request() req, @Param('id') id: number) {
+    return this.service.remove(id, req.internal_store_id);
   }
 }

@@ -14,6 +14,11 @@ Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores
 - El servicio `InventoryService.handleStock` ahora filtra el inventario disponible por `id_store`, garantizando que una venta solo consuma stock de la propia tienda.
 - Al procesar una devolución, si el `sale_item` tiene `id_inventory`, se restauran las unidades al lote exacto del que salieron. Si no tiene `id_inventory` (FIFO consumió varios lotes), se suman las unidades a cada lote existente del producto en la tienda.
 
+### Security
+- Implemented application-layer Row-Level Security (RLS) across all store-scoped modules. Previously, authenticated admins could read or modify records from other stores by guessing row IDs. All `findOne`, `update`, `remove`, and `updateStatus` service methods now receive the caller's `storeId` from `req.internal_store_id` and enforce it in every Sequelize `WHERE` clause.
+- Fixed `products.remove()` which used `Op.not: null` instead of `Op.is: null`, causing soft-deletes to silently no-op on valid records.
+- `invoice-config.update()` no longer uses a hardcoded `findByPk(1)`; it now resolves the config record by `id_store`.
+
 ## [v26.0.4] 2026-04-08
 ### Added
 - Se deja funcional el módulo de Lealtad(Royalty).

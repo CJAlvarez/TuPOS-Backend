@@ -33,15 +33,15 @@ export class StoreController {
   @ApiOperation({ summary: 'Obtener todas las tiendas (paginado y búsqueda)' })
   @ApiResponse({ status: 200, description: 'Lista de tiendas paginada', type: Object })
   findAll(@Request() req, @Query() query: GetStoresQueryDto): Promise<any> {
-    return this.storeService.findAll(query);
+    return this.storeService.findAll(query, req.internal_store_id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una tienda por ID' })
   @ApiResponse({ status: 200, description: 'Tienda encontrada', type: Store })
   @ApiResponse({ status: 404, description: 'Tienda no encontrada' })
-  findOne(@Param('id') id: string): Promise<Store | null> {
-    return this.storeService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Store | null> {
+    return this.storeService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -56,15 +56,15 @@ export class StoreController {
   @ApiOperation({ summary: 'Actualizar una tienda' })
   @ApiResponse({ status: 200, description: 'Tienda actualizada', type: Store })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateStoreDto): Promise<[number, Store[]]> {
-    return this.storeService.update(dto);
+  update(@Request() req, @Body() dto: UpdateStoreDto): Promise<[number, Store[]]> {
+    return this.storeService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una tienda (soft delete)' })
   @ApiResponse({ status: 200, description: 'Tienda eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.storeService.remove(req.internal_user_id, Number(id));
+    return this.storeService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -76,6 +76,6 @@ export class StoreController {
     @Request() req,
     @Body() dto: UpdateStoreStatusDto,
   ): Promise<[number, Store[]]> {
-    return this.storeService.updateStatus(req.internal_user_id, dto);
+    return this.storeService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

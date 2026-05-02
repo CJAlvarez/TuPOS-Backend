@@ -29,8 +29,8 @@ export class GiftCardTransactionController {
   @ApiOperation({ summary: 'Obtener una transacción de gift card por ID' })
   @ApiResponse({ status: 200, description: 'Transacción encontrada', type: GiftCardTransaction })
   @ApiResponse({ status: 404, description: 'Transacción no encontrada' })
-  findOne(@Param('id') id: string): Promise<GiftCardTransaction | null> {
-    return this.giftCardTransactionService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<GiftCardTransaction | null> {
+    return this.giftCardTransactionService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class GiftCardTransactionController {
   @ApiOperation({ summary: 'Actualizar una transacción de gift card' })
   @ApiResponse({ status: 200, description: 'Transacción actualizada', type: GiftCardTransaction })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateGiftCardTransactionDto): Promise<[number, GiftCardTransaction[]]> {
-    return this.giftCardTransactionService.update(dto);
+  update(@Request() req, @Body() dto: UpdateGiftCardTransactionDto): Promise<[number, GiftCardTransaction[]]> {
+    return this.giftCardTransactionService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una transacción de gift card (soft delete)' })
   @ApiResponse({ status: 200, description: 'Transacción eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.giftCardTransactionService.remove(req.internal_user_id, Number(id));
+    return this.giftCardTransactionService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class GiftCardTransactionController {
     @Request() req,
     @Body() dto: UpdateGiftCardTransactionStatusDto,
   ): Promise<[number, GiftCardTransaction[]]> {
-    return this.giftCardTransactionService.updateStatus(req.internal_user_id, dto);
+    return this.giftCardTransactionService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

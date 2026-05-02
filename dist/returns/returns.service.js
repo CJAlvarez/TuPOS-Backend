@@ -139,10 +139,11 @@ let ReturnsService = class ReturnsService {
         });
         return rows;
     }
-    async findOne(id) {
+    async findOne(id, storeId) {
         const item = await this.returnModel.findOne({
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
@@ -150,11 +151,12 @@ let ReturnsService = class ReturnsService {
             throw new common_1.NotFoundException('Return not found');
         return item;
     }
-    async update(dto, internal_user_id) {
+    async update(dto, internal_user_id, storeId) {
         const date = new Date(dto.date);
         const [affectedRows, [updated]] = await this.returnModel.update({ ...dto, date }, {
             where: {
                 id: dto.id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
             returning: true,
@@ -163,23 +165,24 @@ let ReturnsService = class ReturnsService {
             throw new common_1.NotFoundException('Return not found');
         return updated;
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.returnModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.returnModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: dto.id, id_store: storeId }, returning: true });
     }
     validateReturnItems(dto) {
         if (!Array.isArray(dto.return_items) || dto.return_items.length === 0) {
@@ -260,22 +263,21 @@ let ReturnsService = class ReturnsService {
         await this.createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction);
     }
     async restoreToEachInventory(idStore, idProduct, quantityToRestore, createdBy, transaction) {
-        const inventories = await this.inventoryModel.findAll({
+        const inventory = await this.inventoryModel.findOne({
             where: {
                 id_store: idStore,
                 id_product: idProduct,
             },
+            order: [['created_at', 'ASC']],
             transaction,
         });
-        if (!inventories.length) {
+        if (!inventory) {
             await this.createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction);
             return;
         }
-        for (const inventory of inventories) {
-            await inventory.update({
-                unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
-            }, { transaction });
-        }
+        await inventory.update({
+            unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
+        }, { transaction });
     }
     async createInventoryRecord(idStore, idProduct, quantityToRestore, createdBy, transaction) {
         await this.inventoryModel.create({

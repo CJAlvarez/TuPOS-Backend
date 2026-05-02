@@ -30,17 +30,17 @@ let InvoicesController = class InvoicesController {
     findAll(req, query) {
         return this.service.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.service.findOne(id);
+    findOne(req, id) {
+        return this.service.findOne(id, req.internal_store_id);
     }
     create(req, dto) {
         return this.service.create(req.internal_user_id, req.internal_store_id, dto);
     }
-    update(id, dto) {
-        return this.service.update(id, dto);
+    update(req, id, dto) {
+        return this.service.update(id, dto, req.internal_store_id);
     }
-    remove(id) {
-        return this.service.remove(id);
+    remove(req, id) {
+        return this.service.remove(id, req.internal_store_id);
     }
 };
 exports.InvoicesController = InvoicesController;
@@ -61,9 +61,10 @@ __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Obtener detalle de factura' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: invoice_entity_1.Invoice }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
 ], InvoicesController.prototype, "findOne", null);
 __decorate([
@@ -80,10 +81,11 @@ __decorate([
     (0, common_1.Put)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar factura' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: invoice_entity_1.Invoice }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_invoice_dto_1.UpdateInvoiceDto]),
+    __metadata("design:paramtypes", [Object, Number, update_invoice_dto_1.UpdateInvoiceDto]),
     __metadata("design:returntype", void 0)
 ], InvoicesController.prototype, "update", null);
 __decorate([
@@ -93,9 +95,10 @@ __decorate([
         status: 200,
         schema: { example: { message: 'Factura eliminada' } },
     }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
 ], InvoicesController.prototype, "remove", null);
 exports.InvoicesController = InvoicesController = __decorate([

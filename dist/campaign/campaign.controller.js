@@ -32,20 +32,20 @@ let CampaignController = class CampaignController {
     findAll(req, query) {
         return this.campaignService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.campaignService.findOne(Number(id));
+    findOne(req, id) {
+        return this.campaignService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.campaignService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.campaignService.update(dto);
+    update(req, dto) {
+        return this.campaignService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.campaignService.remove(req.internal_user_id, Number(id));
+        return this.campaignService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.campaignService.updateStatus(req.internal_user_id, dto);
+        return this.campaignService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.CampaignController = CampaignController;
@@ -64,9 +64,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una campaña por ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Campaña encontrada', type: campaign_entity_1.Campaign }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Campaña no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], CampaignController.prototype, "findOne", null);
 __decorate([
@@ -85,9 +86,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar una campaña' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Campaña actualizada', type: campaign_entity_1.Campaign }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_campaign_dto_1.UpdateCampaignDto]),
+    __metadata("design:paramtypes", [Object, update_campaign_dto_1.UpdateCampaignDto]),
     __metadata("design:returntype", Promise)
 ], CampaignController.prototype, "update", null);
 __decorate([

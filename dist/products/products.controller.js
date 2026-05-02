@@ -35,20 +35,20 @@ let ProductsController = class ProductsController {
     async getProductsPOS(req, query) {
         return this.productsService.getProductsPOS(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.productsService.findOne(Number(id));
+    findOne(req, id) {
+        return this.productsService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.productsService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.productsService.update(dto);
+    update(req, dto) {
+        return this.productsService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.productsService.remove(req.internal_user_id, Number(id));
+        return this.productsService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.productsService.updateStatus(req.internal_user_id, dto);
+        return this.productsService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.ProductsController = ProductsController;
@@ -87,9 +87,10 @@ __decorate([
         type: product_entity_1.Product,
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Producto no encontrado' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "findOne", null);
 __decorate([
@@ -112,9 +113,10 @@ __decorate([
         type: product_entity_1.Product,
     }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_product_dto_1.UpdateProductDto]),
+    __metadata("design:paramtypes", [Object, update_product_dto_1.UpdateProductDto]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "update", null);
 __decorate([

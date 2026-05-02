@@ -34,26 +34,26 @@ let NotificationController = class NotificationController {
     findAll(req, query) {
         return this.notificationService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.notificationService.findOne(Number(id));
+    findOne(req, id) {
+        return this.notificationService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.notificationService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.notificationService.update(dto);
+    update(req, dto) {
+        return this.notificationService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.notificationService.remove(req.internal_user_id, Number(id));
+        return this.notificationService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.notificationService.updateStatus(req.internal_user_id, dto);
+        return this.notificationService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
     updateSeen(req, dto) {
-        return this.notificationService.updateSeen(req.internal_user_id, dto);
+        return this.notificationService.updateSeen(req.internal_user_id, dto, req.internal_store_id);
     }
     updateArchived(req, dto) {
-        return this.notificationService.updateArchived(req.internal_user_id, dto);
+        return this.notificationService.updateArchived(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.NotificationController = NotificationController;
@@ -82,9 +82,10 @@ __decorate([
         type: notification_entity_1.Notification,
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Notificación no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], NotificationController.prototype, "findOne", null);
 __decorate([
@@ -111,9 +112,10 @@ __decorate([
         type: notification_entity_1.Notification,
     }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_notification_dto_1.UpdateNotificationDto]),
+    __metadata("design:paramtypes", [Object, update_notification_dto_1.UpdateNotificationDto]),
     __metadata("design:returntype", Promise)
 ], NotificationController.prototype, "update", null);
 __decorate([

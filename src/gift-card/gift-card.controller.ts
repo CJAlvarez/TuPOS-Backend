@@ -29,8 +29,8 @@ export class GiftCardController {
   @ApiOperation({ summary: 'Obtener una gift card por ID' })
   @ApiResponse({ status: 200, description: 'Gift card encontrada', type: GiftCard })
   @ApiResponse({ status: 404, description: 'Gift card no encontrada' })
-  findOne(@Param('id') id: string): Promise<GiftCard | null> {
-    return this.giftCardService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<GiftCard | null> {
+    return this.giftCardService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class GiftCardController {
   @ApiOperation({ summary: 'Actualizar una gift card' })
   @ApiResponse({ status: 200, description: 'Gift card actualizada', type: GiftCard })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateGiftCardDto): Promise<[number, GiftCard[]]> {
-    return this.giftCardService.update(dto);
+  update(@Request() req, @Body() dto: UpdateGiftCardDto): Promise<[number, GiftCard[]]> {
+    return this.giftCardService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una gift card (soft delete)' })
   @ApiResponse({ status: 200, description: 'Gift card eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.giftCardService.remove(req.internal_user_id, Number(id));
+    return this.giftCardService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class GiftCardController {
     @Request() req,
     @Body() dto: UpdateGiftCardStatusDto,
   ): Promise<[number, GiftCard[]]> {
-    return this.giftCardService.updateStatus(req.internal_user_id, dto);
+    return this.giftCardService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

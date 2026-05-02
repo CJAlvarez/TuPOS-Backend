@@ -15,11 +15,11 @@ export declare class NotificationService {
         list: Notification[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Notification | null>;
+    findOne(id: number, storeId: number): Promise<Notification | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateNotificationDto): Promise<Notification>;
-    update(dto: UpdateNotificationDto): Promise<[number, Notification[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateNotificationStatusDto): Promise<[number, Notification[]]>;
-    updateSeen(internal_user_id: number, dto: UpdateNotificationSeenDto): Promise<[number, Notification[]]>;
-    updateArchived(internal_user_id: number, dto: UpdateNotificationArchivedDto): Promise<[number, Notification[]]>;
+    update(dto: UpdateNotificationDto, storeId: number): Promise<[number, Notification[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateNotificationStatusDto, storeId: number): Promise<[number, Notification[]]>;
+    updateSeen(internal_user_id: number, dto: UpdateNotificationSeenDto, storeId: number): Promise<[number, Notification[]]>;
+    updateArchived(internal_user_id: number, dto: UpdateNotificationArchivedDto, storeId: number): Promise<[number, Notification[]]>;
 }

@@ -18,9 +18,9 @@ export declare class ProductsService {
         list: Product[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Product | null>;
+    findOne(id: number, storeId: number): Promise<Product | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateProductDto): Promise<Product>;
-    update(dto: UpdateProductDto): Promise<[number, Product[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateProductStatusDto): Promise<[number, Product[]]>;
+    update(dto: UpdateProductDto, storeId: number): Promise<[number, Product[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateProductStatusDto, storeId: number): Promise<[number, Product[]]>;
 }

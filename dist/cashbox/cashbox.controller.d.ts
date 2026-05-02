@@ -10,9 +10,9 @@ export declare class CashboxController {
     private readonly cashboxService;
     constructor(cashboxService: CashboxService);
     findAll(req: any, query: GetCashboxesQueryDto): Promise<any>;
-    findOne(id: string): Promise<Cashbox | null>;
+    findOne(req: any, id: string): Promise<Cashbox | null>;
     create(req: any, data: CreateCashboxDto): Promise<Cashbox>;
-    update(dto: UpdateCashboxDto): Promise<[number, Cashbox[]]>;
+    update(req: any, dto: UpdateCashboxDto): Promise<[number, Cashbox[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateCashboxStatusDto): Promise<[number, Cashbox[]]>;
     openCashbox(req: any, dto: OpenCashboxDto): Promise<[number, Cashbox[]]>;

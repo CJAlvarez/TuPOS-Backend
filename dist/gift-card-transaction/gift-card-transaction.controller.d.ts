@@ -8,9 +8,9 @@ export declare class GiftCardTransactionController {
     private readonly giftCardTransactionService;
     constructor(giftCardTransactionService: GiftCardTransactionService);
     findAll(req: any, query: GetGiftCardTransactionsQueryDto): Promise<any>;
-    findOne(id: string): Promise<GiftCardTransaction | null>;
+    findOne(req: any, id: string): Promise<GiftCardTransaction | null>;
     create(req: any, data: CreateGiftCardTransactionDto): Promise<GiftCardTransaction>;
-    update(dto: UpdateGiftCardTransactionDto): Promise<[number, GiftCardTransaction[]]>;
+    update(req: any, dto: UpdateGiftCardTransactionDto): Promise<[number, GiftCardTransaction[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateGiftCardTransactionStatusDto): Promise<[number, GiftCardTransaction[]]>;
 }

@@ -52,8 +52,8 @@ let PaymentService = class PaymentService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.paymentModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.paymentModel.findOne({ where: { id, id_store: storeId } });
     }
     async create(internal_user_id, internal_store_id, dto) {
         dto.created_by = internal_user_id;
@@ -71,29 +71,30 @@ let PaymentService = class PaymentService {
             created_by: userId,
         }, { transaction });
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.paymentModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.paymentModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.paymentModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: dto.id, id_store: storeId }, returning: true });
     }
     async createPayment(dto, sale, storeId, userId, royaltyResult, transaction) {
         const { moneyAmount, pointsUsed } = royaltyResult;

@@ -31,8 +31,8 @@ export class CashboxController {
   @ApiOperation({ summary: 'Obtener una caja por ID' })
   @ApiResponse({ status: 200, description: 'Caja encontrada', type: Cashbox })
   @ApiResponse({ status: 404, description: 'Caja no encontrada' })
-  findOne(@Param('id') id: string): Promise<Cashbox | null> {
-    return this.cashboxService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Cashbox | null> {
+    return this.cashboxService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -47,15 +47,15 @@ export class CashboxController {
   @ApiOperation({ summary: 'Actualizar una caja' })
   @ApiResponse({ status: 200, description: 'Caja actualizada', type: Cashbox })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateCashboxDto): Promise<[number, Cashbox[]]> {
-    return this.cashboxService.update(dto);
+  update(@Request() req, @Body() dto: UpdateCashboxDto): Promise<[number, Cashbox[]]> {
+    return this.cashboxService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una caja (soft delete)' })
   @ApiResponse({ status: 200, description: 'Caja eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.cashboxService.remove(req.internal_user_id, Number(id));
+    return this.cashboxService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -67,7 +67,7 @@ export class CashboxController {
     @Request() req,
     @Body() dto: UpdateCashboxStatusDto,
   ): Promise<[number, Cashbox[]]> {
-    return this.cashboxService.updateStatus(req.internal_user_id, dto);
+    return this.cashboxService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 
   @Put('open')
@@ -79,7 +79,7 @@ export class CashboxController {
     @Request() req,
     @Body() dto: OpenCashboxDto,
   ): Promise<[number, Cashbox[]]> {
-    return this.cashboxService.openCashbox(req.internal_user_id, dto);
+    return this.cashboxService.openCashbox(req.internal_user_id, dto, req.internal_store_id);
   }
 
   @Put('close')
@@ -91,6 +91,6 @@ export class CashboxController {
     @Request() req,
     @Body() dto: CloseCashboxDto,
   ): Promise<[number, Cashbox[]]> {
-    return this.cashboxService.closeCashbox(req.internal_user_id, dto);
+    return this.cashboxService.closeCashbox(req.internal_user_id, dto, req.internal_store_id);
   }
 }

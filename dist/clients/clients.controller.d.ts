@@ -33,13 +33,13 @@ export declare class ClientsController {
         }[];
         skip: number;
     }>;
-    getClientDetail(id: number): Promise<import("../entities/client.entity").Client>;
+    getClientDetail(req: any, id: number): Promise<import("../entities/client.entity").Client>;
     insertClient(req: any, createClientDto: CreateClientDto): Promise<{
         title: string;
         message: string;
         id_user: number;
     }>;
-    updateClient(updateClientDto: UpdateClientDto): Promise<{
+    updateClient(req: any, updateClientDto: UpdateClientDto): Promise<{
         title: string;
         message: string;
     }>;

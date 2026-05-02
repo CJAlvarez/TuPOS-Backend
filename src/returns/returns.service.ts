@@ -142,10 +142,11 @@ export class ReturnsService {
     return rows;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, storeId: number) {
     const item = await this.returnModel.findOne({
       where: {
         id,
+        id_store: storeId,
         deleted_at: { [Op.is]: null },
       },
     });
@@ -153,13 +154,14 @@ export class ReturnsService {
     return item;
   }
 
-  async update(dto: UpdateReturnDto, internal_user_id: number) {
+  async update(dto: UpdateReturnDto, internal_user_id: number, storeId: number) {
     const date = new Date(dto.date);
     const [affectedRows, [updated]] = await this.returnModel.update(
       { ...dto, date },
       {
         where: {
           id: dto.id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
         returning: true,
@@ -169,7 +171,7 @@ export class ReturnsService {
     return updated;
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.returnModel.update(
       {
         deleted_at: new Date(),
@@ -178,6 +180,7 @@ export class ReturnsService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -188,13 +191,14 @@ export class ReturnsService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateReturnStatusDto,
+    storeId: number,
   ): Promise<[number, Return[]]> {
     return this.returnModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       } as any,
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 
@@ -341,15 +345,16 @@ export class ReturnsService {
     createdBy: number,
     transaction: any,
   ) {
-    const inventories = await this.inventoryModel.findAll({
+    const inventory = await this.inventoryModel.findOne({
       where: {
         id_store: idStore,
         id_product: idProduct,
       },
+      order: [['created_at', 'ASC']],
       transaction,
     });
 
-    if (!inventories.length) {
+    if (!inventory) {
       await this.createInventoryRecord(
         idStore,
         idProduct,
@@ -360,14 +365,12 @@ export class ReturnsService {
       return;
     }
 
-    for (const inventory of inventories) {
-      await inventory.update(
-        {
-          unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
-        },
-        { transaction },
-      );
-    }
+    await inventory.update(
+      {
+        unit_quantity: Number(inventory.getDataValue('unit_quantity') || 0) + quantityToRestore,
+      },
+      { transaction },
+    );
   }
 
   private async createInventoryRecord(

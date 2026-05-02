@@ -44,8 +44,8 @@ export class TerminalService {
     };
   }
 
-  async findOne(id: number): Promise<Terminal | null> {
-    return this.terminalModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Terminal | null> {
+    return this.terminalModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -58,14 +58,14 @@ export class TerminalService {
     return this.terminalModel.create(dto as any);
   }
 
-  async update(dto: UpdateTerminalDto): Promise<[number, Terminal[]]> {
+  async update(dto: UpdateTerminalDto, storeId: number): Promise<[number, Terminal[]]> {
     return this.terminalModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.terminalModel.update(
       {
         deleted_at: new Date(),
@@ -74,6 +74,7 @@ export class TerminalService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -84,13 +85,14 @@ export class TerminalService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateTerminalStatusDto,
+    storeId: number,
   ): Promise<[number, Terminal[]]> {
     return this.terminalModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 }

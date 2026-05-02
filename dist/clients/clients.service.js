@@ -80,9 +80,12 @@ let ClientsService = class ClientsService {
             skip: paginate.skip,
         };
     }
-    async getClientDetail(id) {
+    async getClientDetail(id, storeId) {
+        const where = { id_user: id };
+        if (storeId)
+            where.id_store = storeId;
         const client = await this.clientModel.findOne({
-            where: { id_user: id },
+            where,
             include: [
                 { model: this.userModel, as: 'user', required: true },
                 { model: this.profileModel, as: 'profile', required: true },
@@ -152,9 +155,9 @@ let ClientsService = class ClientsService {
             id_user: newUser.id,
         };
     }
-    async updateClient(updateClientDto) {
+    async updateClient(updateClientDto, storeId) {
         const client = await this.clientModel.findOne({
-            where: { id_user: updateClientDto.user.id },
+            where: { id_user: updateClientDto.user.id, id_store: storeId },
         });
         if (!client)
             throw new Error('Cliente no encontrado');
@@ -173,7 +176,7 @@ let ClientsService = class ClientsService {
             message: 'El cliente ha sido actualizado.',
         };
     }
-    async updateClientStatus(internal_user_id, body) {
+    async updateClientStatus(internal_user_id, body, storeId) {
         if (!body ||
             typeof body.id !== 'number' ||
             typeof body.enable !== 'boolean') {
@@ -186,7 +189,7 @@ let ClientsService = class ClientsService {
         await this.clientModel.update({
             disabled_at: body.enable ? null : new Date(),
             disabled_by: body.enable ? null : internal_user_id,
-        }, { where: { id_user: body.id } });
+        }, { where: { id_user: body.id, id_store: storeId } });
         const user = await this.userModel.findOne({ where: { id: body.id } });
         const profile = await this.profileModel.findOne({
             where: { id_user: body.id },
@@ -225,8 +228,8 @@ let ClientsService = class ClientsService {
             message: `El cliente ha sido ${body.enable ? 'Habilitado' : 'Deshabilitado'}.`,
         };
     }
-    async findByUserId(id_user) {
-        return this.getClientDetail(id_user);
+    async findByUserId(id_user, storeId) {
+        return this.getClientDetail(id_user, storeId);
     }
 };
 exports.ClientsService = ClientsService;

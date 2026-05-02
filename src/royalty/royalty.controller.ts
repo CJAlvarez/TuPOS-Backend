@@ -29,8 +29,8 @@ export class RoyaltyController {
   @ApiOperation({ summary: 'Obtener una lealtad por ID' })
   @ApiResponse({ status: 200, description: 'lealtad encontrada', type: Royalty })
   @ApiResponse({ status: 404, description: 'lealtad no encontrada' })
-  findOne(@Param('id') id: string): Promise<Royalty | null> {
-    return this.royaltyService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Royalty | null> {
+    return this.royaltyService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class RoyaltyController {
   @ApiOperation({ summary: 'Actualizar una lealtad' })
   @ApiResponse({ status: 200, description: 'lealtad actualizada', type: Royalty })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]> {
-    return this.royaltyService.update(dto);
+  update(@Request() req, @Body() dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]> {
+    return this.royaltyService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una lealtad (soft delete)' })
   @ApiResponse({ status: 200, description: 'lealtad eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.royaltyService.remove(req.internal_user_id, Number(id));
+    return this.royaltyService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class RoyaltyController {
     @Request() req,
     @Body() dto: UpdateRoyaltyStatusDto,
   ): Promise<[number, Royalty[]]> {
-    return this.royaltyService.updateStatus(req.internal_user_id, dto);
+    return this.royaltyService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

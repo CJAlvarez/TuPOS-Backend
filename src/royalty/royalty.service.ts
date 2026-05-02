@@ -46,8 +46,8 @@ export class RoyaltyService {
     };
   }
 
-  async findOne(id: number): Promise<Royalty | null> {
-    return this.royaltyModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Royalty | null> {
+    return this.royaltyModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -60,14 +60,14 @@ export class RoyaltyService {
     return this.royaltyModel.create(dto as any);
   }
 
-  async update(dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]> {
+  async update(dto: UpdateRoyaltyDto, storeId: number): Promise<[number, Royalty[]]> {
     return this.royaltyModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.royaltyModel.update(
       {
         deleted_at: new Date(),
@@ -76,6 +76,7 @@ export class RoyaltyService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -86,13 +87,14 @@ export class RoyaltyService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateRoyaltyStatusDto,
+    storeId: number,
   ): Promise<[number, Royalty[]]> {
     return this.royaltyModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 

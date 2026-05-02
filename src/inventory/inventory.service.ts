@@ -51,8 +51,8 @@ export class InventoryService {
     };
   }
 
-  async findOne(id: number): Promise<Inventory | null> {
-    return this.inventoryModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Inventory | null> {
+    return this.inventoryModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -65,15 +65,15 @@ export class InventoryService {
     return this.inventoryModel.create(dto as any);
   }
 
-  async update(dto: UpdateInventoryDto): Promise<[number, Inventory[]]> {
+  async update(dto: UpdateInventoryDto, storeId: number): Promise<[number, Inventory[]]> {
     return this.inventoryModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<number> {
-    return this.inventoryModel.destroy({ where: { id } });
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<number> {
+    return this.inventoryModel.destroy({ where: { id, id_store: storeId } });
   }
 
   async handleStock(item, idStore: number, transaction) {

@@ -54,22 +54,22 @@ let InventoryService = class InventoryService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.inventoryModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.inventoryModel.findOne({ where: { id, id_store: storeId } });
     }
     async create(internal_user_id, internal_store_id, dto) {
         dto.created_by = internal_user_id;
         dto.id_store = internal_store_id;
         return this.inventoryModel.create(dto);
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.inventoryModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
-        return this.inventoryModel.destroy({ where: { id } });
+    async remove(internal_user_id, id, storeId) {
+        return this.inventoryModel.destroy({ where: { id, id_store: storeId } });
     }
     async handleStock(item, idStore, transaction) {
         const product = await this.productModel.findByPk(item.id_product, {

@@ -7,8 +7,8 @@ export declare class InventoryController {
     private readonly inventoryService;
     constructor(inventoryService: InventoryService);
     findAll(req: any, query: GetInventoryQueryDto): Promise<any>;
-    findOne(id: string): Promise<Inventory | null>;
+    findOne(req: any, id: string): Promise<Inventory | null>;
     create(req: any, data: CreateInventoryDto): Promise<Inventory>;
-    update(dto: UpdateInventoryDto): Promise<[number, Inventory[]]>;
+    update(req: any, dto: UpdateInventoryDto): Promise<[number, Inventory[]]>;
     remove(req: any, id: string): Promise<number>;
 }

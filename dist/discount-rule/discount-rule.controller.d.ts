@@ -8,9 +8,9 @@ export declare class DiscountRuleController {
     private readonly discountRuleService;
     constructor(discountRuleService: DiscountRuleService);
     findAll(req: any, query: GetDiscountRulesQueryDto): Promise<any>;
-    findOne(id: string): Promise<DiscountRule | null>;
+    findOne(req: any, id: string): Promise<DiscountRule | null>;
     create(req: any, data: CreateDiscountRuleDto): Promise<DiscountRule>;
-    update(dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]>;
+    update(req: any, dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateDiscountRuleStatusDto): Promise<[number, DiscountRule[]]>;
 }

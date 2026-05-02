@@ -64,8 +64,8 @@ export class ProductsController {
     type: Product,
   })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  findOne(@Param('id') id: string): Promise<Product | null> {
-    return this.productsService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Product | null> {
+    return this.productsService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -84,15 +84,15 @@ export class ProductsController {
     type: Product,
   })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateProductDto): Promise<[number, Product[]]> {
-    return this.productsService.update(dto);
+  update(@Request() req, @Body() dto: UpdateProductDto): Promise<[number, Product[]]> {
+    return this.productsService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un producto' })
   @ApiResponse({ status: 200, description: 'Producto eliminado' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.productsService.remove(req.internal_user_id, Number(id));
+    return this.productsService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -104,6 +104,6 @@ export class ProductsController {
     @Request() req,
     @Body() dto: UpdateProductStatusDto,
   ): Promise<[number, Product[]]> {
-    return this.productsService.updateStatus(req.internal_user_id, dto);
+    return this.productsService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

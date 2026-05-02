@@ -71,9 +71,11 @@ export class ClientsService {
     };
   }
 
-  async getClientDetail(id: number) {
+  async getClientDetail(id: number, storeId?: number) {
+    const where: any = { id_user: id };
+    if (storeId) where.id_store = storeId;
     const client = await this.clientModel.findOne({
-      where: { id_user: id },
+      where,
       include: [
         { model: this.userModel, as: 'user', required: true },
         { model: this.profileModel, as: 'profile', required: true },
@@ -159,9 +161,9 @@ export class ClientsService {
     };
   }
 
-  async updateClient(updateClientDto: UpdateClientDto) {
+  async updateClient(updateClientDto: UpdateClientDto, storeId: number) {
     const client = await this.clientModel.findOne({
-      where: { id_user: updateClientDto.user.id },
+      where: { id_user: updateClientDto.user.id, id_store: storeId },
     });
     if (!client) throw new Error('Cliente no encontrado');
     // Actualizar usuario si corresponde
@@ -185,6 +187,7 @@ export class ClientsService {
   async updateClientStatus(
     internal_user_id: number,
     body: UpdateClientStatusDto,
+    storeId: number,
   ) {
     if (
       !body ||
@@ -202,7 +205,7 @@ export class ClientsService {
         disabled_at: body.enable ? null : new Date(),
         disabled_by: body.enable ? null : internal_user_id,
       },
-      { where: { id_user: body.id } },
+      { where: { id_user: body.id, id_store: storeId } },
     );
     // Obtener datos de usuario y perfil
     const user = await this.userModel.findOne({ where: { id: body.id } });
@@ -244,7 +247,7 @@ export class ClientsService {
     };
   }
 
-  async findByUserId(id_user: number) {
-    return this.getClientDetail(id_user);
+  async findByUserId(id_user: number, storeId?: number) {
+    return this.getClientDetail(id_user, storeId);
   }
 }

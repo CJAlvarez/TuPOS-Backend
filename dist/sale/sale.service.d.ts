@@ -25,11 +25,11 @@ export declare class SaleService {
         list: Sale[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Sale | null>;
+    findOne(id: number, storeId: number): Promise<Sale | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateSaleDto): Promise<Sale>;
-    update(dto: UpdateSaleDto): Promise<[number, Sale[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateSaleStatusDto): Promise<[number, Sale[]]>;
+    update(dto: UpdateSaleDto, storeId: number): Promise<[number, Sale[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateSaleStatusDto, storeId: number): Promise<[number, Sale[]]>;
     createSale(dto: any, saleNumber: any, userId: any, transaction: any): Promise<Sale>;
     processItems(sale: any, items: any, storeId: any, transaction: any): Promise<void>;
     generateNumber(): Promise<string>;

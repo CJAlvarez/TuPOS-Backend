@@ -15,10 +15,10 @@ export declare class GiftCardService {
         list: GiftCard[];
         skip: number;
     }>;
-    findOne(id: number): Promise<GiftCard | null>;
+    findOne(id: number, storeId: number): Promise<GiftCard | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateGiftCardDto): Promise<GiftCard>;
-    update(dto: UpdateGiftCardDto): Promise<[number, GiftCard[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateGiftCardStatusDto): Promise<[number, GiftCard[]]>;
+    update(dto: UpdateGiftCardDto, storeId: number): Promise<[number, GiftCard[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateGiftCardStatusDto, storeId: number): Promise<[number, GiftCard[]]>;
     processGiftCards(giftCards: any, sale: any, userId: any, storeId: any, transaction: any): Promise<void>;
 }

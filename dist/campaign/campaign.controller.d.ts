@@ -8,9 +8,9 @@ export declare class CampaignController {
     private readonly campaignService;
     constructor(campaignService: CampaignService);
     findAll(req: any, query: GetCampaignsQueryDto): Promise<any>;
-    findOne(id: string): Promise<Campaign | null>;
+    findOne(req: any, id: string): Promise<Campaign | null>;
     create(req: any, data: CreateCampaignDto): Promise<Campaign>;
-    update(dto: UpdateCampaignDto): Promise<[number, Campaign[]]>;
+    update(req: any, dto: UpdateCampaignDto): Promise<[number, Campaign[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateCampaignStatusDto): Promise<[number, Campaign[]]>;
 }

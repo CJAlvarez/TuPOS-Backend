@@ -15,11 +15,11 @@ export declare class RoyaltyService {
         list: Royalty[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Royalty | null>;
+    findOne(id: number, storeId: number): Promise<Royalty | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateRoyaltyDto): Promise<Royalty>;
-    update(dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateRoyaltyStatusDto): Promise<[number, Royalty[]]>;
+    update(dto: UpdateRoyaltyDto, storeId: number): Promise<[number, Royalty[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateRoyaltyStatusDto, storeId: number): Promise<[number, Royalty[]]>;
     processRoyalty(dto: any, transaction: any): Promise<{
         moneyAmount: any;
         pointsUsed: number;

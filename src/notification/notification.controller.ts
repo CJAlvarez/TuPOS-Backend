@@ -53,8 +53,8 @@ export class NotificationController {
     type: Notification,
   })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada' })
-  findOne(@Param('id') id: string): Promise<Notification | null> {
-    return this.notificationService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Notification | null> {
+    return this.notificationService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -81,16 +81,17 @@ export class NotificationController {
   })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   update(
+    @Request() req,
     @Body() dto: UpdateNotificationDto,
   ): Promise<[number, Notification[]]> {
-    return this.notificationService.update(dto);
+    return this.notificationService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una notificación (soft delete)' })
   @ApiResponse({ status: 200, description: 'Notificación eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.notificationService.remove(req.internal_user_id, Number(id));
+    return this.notificationService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -105,7 +106,7 @@ export class NotificationController {
     @Request() req,
     @Body() dto: UpdateNotificationStatusDto,
   ): Promise<[number, Notification[]]> {
-    return this.notificationService.updateStatus(req.internal_user_id, dto);
+    return this.notificationService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 
   @Put('seen')
@@ -117,7 +118,7 @@ export class NotificationController {
     @Request() req,
     @Body() dto: UpdateNotificationSeenDto,
   ): Promise<[number, Notification[]]> {
-    return this.notificationService.updateSeen(req.internal_user_id, dto);
+    return this.notificationService.updateSeen(req.internal_user_id, dto, req.internal_store_id);
   }
 
   @Put('archive')
@@ -129,6 +130,6 @@ export class NotificationController {
     @Request() req,
     @Body() dto: UpdateNotificationArchivedDto,
   ): Promise<[number, Notification[]]> {
-    return this.notificationService.updateArchived(req.internal_user_id, dto);
+    return this.notificationService.updateArchived(req.internal_user_id, dto, req.internal_store_id);
   }
 }

@@ -16,10 +16,10 @@ export declare class InventoryService {
         list: Inventory[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Inventory | null>;
+    findOne(id: number, storeId: number): Promise<Inventory | null>;
     create(internal_user_id: number, internal_store_id: number, dto: CreateInventoryDto): Promise<Inventory>;
-    update(dto: UpdateInventoryDto): Promise<[number, Inventory[]]>;
-    remove(internal_user_id: number, id: number): Promise<number>;
+    update(dto: UpdateInventoryDto, storeId: number): Promise<[number, Inventory[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<number>;
     handleStock(item: any, idStore: number, transaction: any): Promise<{
         inventoryIds: number[];
         consumed: {

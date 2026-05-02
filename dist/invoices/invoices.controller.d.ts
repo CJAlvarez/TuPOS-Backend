@@ -10,10 +10,10 @@ export declare class InvoicesController {
         list: Invoice[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Invoice>;
+    findOne(req: any, id: number): Promise<Invoice>;
     create(req: any, dto: CreateInvoiceDto): Promise<any>;
-    update(id: number, dto: UpdateInvoiceDto): Promise<Invoice>;
-    remove(id: number): Promise<{
+    update(req: any, id: number, dto: UpdateInvoiceDto): Promise<Invoice>;
+    remove(req: any, id: number): Promise<{
         message: string;
     }>;
 }

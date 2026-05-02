@@ -59,8 +59,8 @@ export class SaleService {
     };
   }
 
-  async findOne(id: number): Promise<Sale | null> {
-    return this.saleModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Sale | null> {
+    return this.saleModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -123,14 +123,14 @@ export class SaleService {
     }
   }
 
-  async update(dto: UpdateSaleDto): Promise<[number, Sale[]]> {
+  async update(dto: UpdateSaleDto, storeId: number): Promise<[number, Sale[]]> {
     return this.saleModel.update(dto as any, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.saleModel.update(
       {
         deleted_at: new Date(),
@@ -139,6 +139,7 @@ export class SaleService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -149,13 +150,14 @@ export class SaleService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateSaleStatusDto,
+    storeId: number,
   ): Promise<[number, Sale[]]> {
     return this.saleModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 

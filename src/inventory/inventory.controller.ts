@@ -39,8 +39,8 @@ export class InventoryController {
   @ApiOperation({ summary: 'Obtener un registro de inventario por ID' })
   @ApiResponse({ status: 200, description: 'Inventario encontrado', type: Inventory })
   @ApiResponse({ status: 404, description: 'Inventario no encontrado' })
-  findOne(@Param('id') id: string): Promise<Inventory | null> {
-    return this.inventoryService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Inventory | null> {
+    return this.inventoryService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -55,14 +55,14 @@ export class InventoryController {
   @ApiOperation({ summary: 'Actualizar un registro de inventario' })
   @ApiResponse({ status: 200, description: 'Inventario actualizado', type: Inventory })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateInventoryDto): Promise<[number, Inventory[]]> {
-    return this.inventoryService.update(dto);
+  update(@Request() req, @Body() dto: UpdateInventoryDto): Promise<[number, Inventory[]]> {
+    return this.inventoryService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un registro de inventario' })
   @ApiResponse({ status: 200, description: 'Inventario eliminado' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.inventoryService.remove(req.internal_user_id, Number(id));
+    return this.inventoryService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 }

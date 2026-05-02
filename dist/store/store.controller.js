@@ -30,22 +30,22 @@ let StoreController = class StoreController {
         this.storeService = storeService;
     }
     findAll(req, query) {
-        return this.storeService.findAll(query);
+        return this.storeService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.storeService.findOne(Number(id));
+    findOne(req, id) {
+        return this.storeService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.storeService.create(req.internal_user_id, data);
     }
-    update(dto) {
-        return this.storeService.update(dto);
+    update(req, dto) {
+        return this.storeService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.storeService.remove(req.internal_user_id, Number(id));
+        return this.storeService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.storeService.updateStatus(req.internal_user_id, dto);
+        return this.storeService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.StoreController = StoreController;
@@ -64,9 +64,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una tienda por ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Tienda encontrada', type: store_entity_1.Store }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Tienda no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], StoreController.prototype, "findOne", null);
 __decorate([
@@ -85,9 +86,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar una tienda' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Tienda actualizada', type: store_entity_1.Store }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_store_dto_1.UpdateStoreDto]),
+    __metadata("design:paramtypes", [Object, update_store_dto_1.UpdateStoreDto]),
     __metadata("design:returntype", Promise)
 ], StoreController.prototype, "update", null);
 __decorate([

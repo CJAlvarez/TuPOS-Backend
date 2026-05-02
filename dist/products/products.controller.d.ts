@@ -17,9 +17,9 @@ export declare class ProductsController {
         list: Product[];
         skip: number;
     }>;
-    findOne(id: string): Promise<Product | null>;
+    findOne(req: any, id: string): Promise<Product | null>;
     create(req: any, data: CreateProductDto): Promise<Product>;
-    update(dto: UpdateProductDto): Promise<[number, Product[]]>;
+    update(req: any, dto: UpdateProductDto): Promise<[number, Product[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateProductStatusDto): Promise<[number, Product[]]>;
 }

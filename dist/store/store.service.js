@@ -25,9 +25,9 @@ let StoreService = class StoreService {
         this.storeModel = storeModel;
         this.utilsService = utilsService;
     }
-    async findAll(query) {
+    async findAll(query, storeId) {
         const { search_word, limit = 10, skip = 0 } = query;
-        const where = {};
+        const where = { id: storeId };
         where.deleted_at = { [sequelize_2.Op.is]: null };
         if (search_word) {
             where[sequelize_2.Op.or] = [
@@ -51,36 +51,36 @@ let StoreService = class StoreService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.storeModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.storeModel.findOne({ where: { id: storeId } });
     }
     async create(internal_user_id, dto) {
         dto.created_by = internal_user_id;
         return this.storeModel.create(dto);
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.storeModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.storeModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
-                id,
+                id: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.storeModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: storeId }, returning: true });
     }
 };
 exports.StoreService = StoreService;

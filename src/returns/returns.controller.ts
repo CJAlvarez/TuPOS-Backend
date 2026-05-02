@@ -57,8 +57,8 @@ export class ReturnsController {
   @ApiResponse({ status: 200, description: 'Devolución encontrada' })
   @ApiResponse({ status: 404, description: 'Devolución no encontrada' })
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.returnsService.findOne(Number(id));
+  async findOne(@Param('id') id: string, @Req() req) {
+    return this.returnsService.findOne(Number(id), req.internal_store_id);
   }
 
   @ApiOperation({ summary: 'Actualizar devolución' })
@@ -67,7 +67,7 @@ export class ReturnsController {
   @ApiResponse({ status: 404, description: 'Devolución no encontrada' })
   @Put()
   async update(@Body() dto: UpdateReturnDto, @Req() req) {
-    return this.returnsService.update(dto, req.internal_user_id);
+    return this.returnsService.update(dto, req.internal_user_id, req.internal_store_id);
   }
 
   @ApiOperation({ summary: 'Eliminar devolución (soft delete)' })
@@ -76,7 +76,7 @@ export class ReturnsController {
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string, @Req() req) {
-    return this.returnsService.remove(req.internal_user_id, Number(id));
+    return this.returnsService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @ApiOperation({ summary: 'Cambiar estado de devolución' })
@@ -85,6 +85,6 @@ export class ReturnsController {
   @ApiResponse({ status: 404, description: 'Devolución no encontrada' })
   @Put('status')
   async updateStatus(@Body() dto: UpdateReturnStatusDto, @Req() req) {
-    return this.returnsService.updateStatus(req.internal_user_id, dto);
+    return this.returnsService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

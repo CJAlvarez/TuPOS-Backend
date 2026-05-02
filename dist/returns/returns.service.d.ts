@@ -24,10 +24,10 @@ export declare class ReturnsService {
         skip: number;
     }>;
     getProducts(query: GetProductsQueryDto): Promise<SaleItem[]>;
-    findOne(id: number): Promise<Return>;
-    update(dto: UpdateReturnDto, internal_user_id: number): Promise<Return>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateReturnStatusDto): Promise<[number, Return[]]>;
+    findOne(id: number, storeId: number): Promise<Return>;
+    update(dto: UpdateReturnDto, internal_user_id: number, storeId: number): Promise<Return>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateReturnStatusDto, storeId: number): Promise<[number, Return[]]>;
     private validateReturnItems;
     private createReturnEntity;
     private buildReturnItemsPayload;

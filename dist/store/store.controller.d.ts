@@ -8,9 +8,9 @@ export declare class StoreController {
     private readonly storeService;
     constructor(storeService: StoreService);
     findAll(req: any, query: GetStoresQueryDto): Promise<any>;
-    findOne(id: string): Promise<Store | null>;
+    findOne(req: any, id: string): Promise<Store | null>;
     create(req: any, data: CreateStoreDto): Promise<Store>;
-    update(dto: UpdateStoreDto): Promise<[number, Store[]]>;
+    update(req: any, dto: UpdateStoreDto): Promise<[number, Store[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateStoreStatusDto): Promise<[number, Store[]]>;
 }
