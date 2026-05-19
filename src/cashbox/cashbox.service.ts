@@ -45,8 +45,8 @@ export class CashboxService {
     };
   }
 
-  async findOne(id: number): Promise<Cashbox | null> {
-    return this.cashboxModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Cashbox | null> {
+    return this.cashboxModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -59,14 +59,14 @@ export class CashboxService {
     return this.cashboxModel.create(dto as any);
   }
 
-  async update(dto: UpdateCashboxDto): Promise<[number, Cashbox[]]> {
+  async update(dto: UpdateCashboxDto, storeId: number): Promise<[number, Cashbox[]]> {
     return this.cashboxModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.cashboxModel.update(
       {
         deleted_at: new Date(),
@@ -75,6 +75,7 @@ export class CashboxService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -85,39 +86,42 @@ export class CashboxService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateCashboxStatusDto,
+    storeId: number,
   ): Promise<[number, Cashbox[]]> {
     return this.cashboxModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 
   async openCashbox(
     internal_user_id: number,
     dto: OpenCashboxDto,
+    storeId: number,
   ): Promise<[number, Cashbox[]]> {
     return this.cashboxModel.update(
       {
         opened_at: new Date(),
         opened_by: internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 
   async closeCashbox(
     internal_user_id: number,
     dto: CloseCashboxDto,
+    storeId: number,
   ): Promise<[number, Cashbox[]]> {
     return this.cashboxModel.update(
       {
         closed_at: new Date(),
         closed_by: internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 }

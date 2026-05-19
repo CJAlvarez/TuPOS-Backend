@@ -15,6 +15,7 @@ const class_validator_1 = require("class-validator");
 class CreateSaleItemDto {
     id_sale;
     id_product;
+    id_inventory;
     quantity;
     price;
     created_by;
@@ -31,6 +32,12 @@ __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], CreateSaleItemDto.prototype, "id_product", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'ID del inventario del que salió el item' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreateSaleItemDto.prototype, "id_inventory", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsInt)(),

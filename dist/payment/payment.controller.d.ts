@@ -8,9 +8,9 @@ export declare class PaymentController {
     private readonly paymentService;
     constructor(paymentService: PaymentService);
     findAll(req: any, query: GetPaymentsQueryDto): Promise<any>;
-    findOne(id: string): Promise<Payment | null>;
+    findOne(req: any, id: string): Promise<Payment | null>;
     create(req: any, data: CreatePaymentDto): Promise<Payment>;
-    update(dto: UpdatePaymentDto): Promise<[number, Payment[]]>;
+    update(req: any, dto: UpdatePaymentDto): Promise<[number, Payment[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdatePaymentStatusDto): Promise<[number, Payment[]]>;
 }

@@ -38,17 +38,17 @@ let ReturnsController = class ReturnsController {
     async getProducts(query) {
         return this.returnsService.getProducts(query);
     }
-    async findOne(id) {
-        return this.returnsService.findOne(Number(id));
+    async findOne(id, req) {
+        return this.returnsService.findOne(Number(id), req.internal_store_id);
     }
     async update(dto, req) {
-        return this.returnsService.update(dto, req.internal_user_id);
+        return this.returnsService.update(dto, req.internal_user_id, req.internal_store_id);
     }
     async remove(id, req) {
-        return this.returnsService.remove(req.internal_user_id, Number(id));
+        return this.returnsService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     async updateStatus(dto, req) {
-        return this.returnsService.updateStatus(req.internal_user_id, dto);
+        return this.returnsService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.ReturnsController = ReturnsController;
@@ -89,8 +89,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Devolución no encontrada' }),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ReturnsController.prototype, "findOne", null);
 __decorate([

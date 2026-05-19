@@ -29,8 +29,8 @@ export class CampaignController {
   @ApiOperation({ summary: 'Obtener una campaña por ID' })
   @ApiResponse({ status: 200, description: 'Campaña encontrada', type: Campaign })
   @ApiResponse({ status: 404, description: 'Campaña no encontrada' })
-  findOne(@Param('id') id: string): Promise<Campaign | null> {
-    return this.campaignService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Campaign | null> {
+    return this.campaignService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class CampaignController {
   @ApiOperation({ summary: 'Actualizar una campaña' })
   @ApiResponse({ status: 200, description: 'Campaña actualizada', type: Campaign })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateCampaignDto): Promise<[number, Campaign[]]> {
-    return this.campaignService.update(dto);
+  update(@Request() req, @Body() dto: UpdateCampaignDto): Promise<[number, Campaign[]]> {
+    return this.campaignService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una campaña (soft delete)' })
   @ApiResponse({ status: 200, description: 'Campaña eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.campaignService.remove(req.internal_user_id, Number(id));
+    return this.campaignService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class CampaignController {
     @Request() req,
     @Body() dto: UpdateCampaignStatusDto,
   ): Promise<[number, Campaign[]]> {
-    return this.campaignService.updateStatus(req.internal_user_id, dto);
+    return this.campaignService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

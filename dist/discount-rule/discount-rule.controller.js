@@ -32,20 +32,20 @@ let DiscountRuleController = class DiscountRuleController {
     findAll(req, query) {
         return this.discountRuleService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.discountRuleService.findOne(Number(id));
+    findOne(req, id) {
+        return this.discountRuleService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.discountRuleService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.discountRuleService.update(dto);
+    update(req, dto) {
+        return this.discountRuleService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.discountRuleService.remove(req.internal_user_id, Number(id));
+        return this.discountRuleService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.discountRuleService.updateStatus(req.internal_user_id, dto);
+        return this.discountRuleService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.DiscountRuleController = DiscountRuleController;
@@ -64,9 +64,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una regla de descuento por ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Regla de descuento encontrada', type: discount_rule_entity_1.DiscountRule }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Regla de descuento no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], DiscountRuleController.prototype, "findOne", null);
 __decorate([
@@ -85,9 +86,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar una regla de descuento' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Regla de descuento actualizada', type: discount_rule_entity_1.DiscountRule }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_discount_rule_dto_1.UpdateDiscountRuleDto]),
+    __metadata("design:paramtypes", [Object, update_discount_rule_dto_1.UpdateDiscountRuleDto]),
     __metadata("design:returntype", Promise)
 ], DiscountRuleController.prototype, "update", null);
 __decorate([

@@ -8,9 +8,9 @@ export declare class RoyaltyController {
     private readonly royaltyService;
     constructor(royaltyService: RoyaltyService);
     findAll(req: any, query: GetRoyaltiesQueryDto): Promise<any>;
-    findOne(id: string): Promise<Royalty | null>;
+    findOne(req: any, id: string): Promise<Royalty | null>;
     create(req: any, data: CreateRoyaltyDto): Promise<Royalty>;
-    update(dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]>;
+    update(req: any, dto: UpdateRoyaltyDto): Promise<[number, Royalty[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateRoyaltyStatusDto): Promise<[number, Royalty[]]>;
 }

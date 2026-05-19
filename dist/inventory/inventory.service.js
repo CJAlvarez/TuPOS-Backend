@@ -54,24 +54,24 @@ let InventoryService = class InventoryService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.inventoryModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.inventoryModel.findOne({ where: { id, id_store: storeId } });
     }
     async create(internal_user_id, internal_store_id, dto) {
         dto.created_by = internal_user_id;
         dto.id_store = internal_store_id;
         return this.inventoryModel.create(dto);
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.inventoryModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
-        return this.inventoryModel.destroy({ where: { id } });
+    async remove(internal_user_id, id, storeId) {
+        return this.inventoryModel.destroy({ where: { id, id_store: storeId } });
     }
-    async handleStock(item, transaction) {
+    async handleStock(item, idStore, transaction) {
         const product = await this.productModel.findByPk(item.id_product, {
             transaction,
         });
@@ -79,9 +79,13 @@ let InventoryService = class InventoryService {
             throw new common_1.BadRequestException(`Producto ${item.id_product} no encontrado`);
         }
         const unitsToDeduct = this.calculateUnits(item, product);
-        const inventories = await this.getAvailableInventories(item.id_product, transaction);
+        const inventories = await this.getAvailableInventories(item.id_product, idStore, transaction);
         this.validateStock(inventories, unitsToDeduct, product.getDataValue('name'));
-        await this.applyFifo(inventories, unitsToDeduct, transaction);
+        const consumed = await this.applyFifo(inventories, unitsToDeduct, transaction);
+        return {
+            inventoryIds: consumed.map((c) => c.id),
+            consumed,
+        };
     }
     calculateUnits(item, product) {
         if (item.sale_type === 'box' && product.getDataValue('box_amount')) {
@@ -89,10 +93,11 @@ let InventoryService = class InventoryService {
         }
         return item.quantity;
     }
-    async getAvailableInventories(productId, transaction) {
+    async getAvailableInventories(productId, idStore, transaction) {
         return this.inventoryModel.findAll({
             where: {
                 id_product: productId,
+                id_store: idStore,
                 unit_quantity: { [sequelize_2.Op.gt]: 0 },
                 [sequelize_2.Op.or]: [
                     { expiration_date: { [sequelize_2.Op.gte]: new Date() } },
@@ -115,6 +120,7 @@ let InventoryService = class InventoryService {
     async applyFifo(inventories, quantity, transaction) {
         let remaining = quantity;
         const updates = [];
+        const consumed = [];
         for (const inv of inventories) {
             if (remaining <= 0)
                 break;
@@ -124,11 +130,16 @@ let InventoryService = class InventoryService {
                 id: inv.getDataValue('id'),
                 newQty: current - take,
             });
+            consumed.push({
+                id: inv.getDataValue('id'),
+                quantity: take,
+            });
             remaining -= take;
         }
         if (!updates.length)
-            return;
+            return consumed;
         await this.bulkUpdateInventories(updates, transaction);
+        return consumed;
     }
     async bulkUpdateInventories(updates, transaction) {
         const ids = updates.map((u) => u.id);

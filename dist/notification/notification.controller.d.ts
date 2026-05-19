@@ -10,9 +10,9 @@ export declare class NotificationController {
     private readonly notificationService;
     constructor(notificationService: NotificationService);
     findAll(req: any, query: GetNotificationsQueryDto): Promise<any>;
-    findOne(id: string): Promise<Notification | null>;
+    findOne(req: any, id: string): Promise<Notification | null>;
     create(req: any, data: CreateNotificationDto): Promise<Notification>;
-    update(dto: UpdateNotificationDto): Promise<[number, Notification[]]>;
+    update(req: any, dto: UpdateNotificationDto): Promise<[number, Notification[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateNotificationStatusDto): Promise<[number, Notification[]]>;
     updateSeen(req: any, dto: UpdateNotificationSeenDto): Promise<[number, Notification[]]>;

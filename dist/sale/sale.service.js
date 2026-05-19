@@ -70,8 +70,8 @@ let SaleService = class SaleService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.saleModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.saleModel.findOne({ where: { id, id_store: storeId } });
     }
     async create(internal_user_id, internal_store_id, dto) {
         const transaction = await this.sequelize.transaction();
@@ -82,39 +82,40 @@ let SaleService = class SaleService {
             await this.processItems(sale, dto.items, dto.id_store, transaction);
             await this.giftCardService.processGiftCards(dto.gift_cards, sale, internal_user_id, dto.id_store, transaction);
             const royaltyResult = await this.royaltyService.processRoyalty(dto, transaction);
-            await this.royaltyService.generatePoints(dto.id_client, royaltyResult.moneyAmount, sale.id, internal_user_id, dto.id_store, transaction);
+            const loyaltyPointsEarned = await this.royaltyService.generatePoints(dto.id_client, royaltyResult.moneyAmount, sale.id, internal_user_id, dto.id_store, transaction);
             await this.paymentService.createPayment(dto, sale, dto.id_store, internal_user_id, royaltyResult, transaction);
             await transaction.commit();
-            return sale;
+            return { ...sale.toJSON(), loyalty_points_earned: loyaltyPointsEarned };
         }
         catch (error) {
             await transaction.rollback();
             throw error;
         }
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.saleModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.saleModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.saleModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: dto.id, id_store: storeId }, returning: true });
     }
     async createSale(dto, saleNumber, userId, transaction) {
         return this.saleModel.create({
@@ -136,8 +137,9 @@ let SaleService = class SaleService {
         if (!items?.length)
             return;
         for (const item of items) {
-            await this.saleItemService.createCustom(sale.id, item, storeId, transaction);
-            await this.inventoryService.handleStock(item, transaction);
+            const stockTrace = await this.inventoryService.handleStock(item, storeId, transaction);
+            const idInventory = stockTrace.inventoryIds.length === 1 ? stockTrace.inventoryIds[0] : null;
+            await this.saleItemService.createCustom(sale.id, item, storeId, transaction, idInventory);
         }
     }
     async generateNumber() {

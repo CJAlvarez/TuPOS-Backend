@@ -29,8 +29,8 @@ let InvoiceConfigService = class InvoiceConfigService {
         const config = await this.invoiceConfigModel.findOne({ where });
         return config;
     }
-    async findOne(id) {
-        const config = await this.invoiceConfigModel.findByPk(id);
+    async findOne(id, storeId) {
+        const config = await this.invoiceConfigModel.findOne({ where: { id, id_store: storeId } });
         if (!config)
             throw new common_1.NotFoundException('Configuración de factura no encontrada');
         return config;
@@ -39,8 +39,8 @@ let InvoiceConfigService = class InvoiceConfigService {
         dto.id_store = internal_store_id;
         return this.invoiceConfigModel.create(dto);
     }
-    async update(dto) {
-        const config = await this.invoiceConfigModel.findByPk(1);
+    async update(dto, storeId) {
+        const config = await this.invoiceConfigModel.findOne({ where: { id_store: storeId } });
         if (!config)
             throw new common_1.NotFoundException('Configuración de factura no encontrada');
         await config.update(dto);
@@ -49,8 +49,8 @@ let InvoiceConfigService = class InvoiceConfigService {
             message: "Configuración actualizada correctamente",
         };
     }
-    async remove(id) {
-        const config = await this.invoiceConfigModel.findByPk(id);
+    async remove(id, storeId) {
+        const config = await this.invoiceConfigModel.findOne({ where: { id, id_store: storeId } });
         if (!config)
             throw new common_1.NotFoundException('Configuración de factura no encontrada');
         await config.destroy();

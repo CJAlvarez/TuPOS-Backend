@@ -8,9 +8,9 @@ export declare class SaleController {
     private readonly saleService;
     constructor(saleService: SaleService);
     findAll(req: any, query: GetSalesQueryDto): Promise<any>;
-    findOne(id: string): Promise<Sale | null>;
-    create(req: any, data: CreateSaleDto): Promise<Sale>;
-    update(dto: UpdateSaleDto): Promise<[number, Sale[]]>;
+    findOne(req: any, id: string): Promise<Sale | null>;
+    create(req: any, data: CreateSaleDto): Promise<any>;
+    update(req: any, dto: UpdateSaleDto): Promise<[number, Sale[]]>;
     remove(req: any, id: string): Promise<number>;
     updateStatus(req: any, dto: UpdateSaleStatusDto): Promise<[number, Sale[]]>;
 }

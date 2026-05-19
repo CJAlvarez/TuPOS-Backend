@@ -5,13 +5,13 @@ export declare class InvoiceConfigService {
     private readonly invoiceConfigModel;
     constructor(invoiceConfigModel: typeof InvoiceConfig);
     findAll(id_store?: number): Promise<InvoiceConfig | null>;
-    findOne(id: number): Promise<InvoiceConfig>;
+    findOne(id: number, storeId: number): Promise<InvoiceConfig>;
     create(internal_store_id: number, dto: CreateInvoiceConfigDto): Promise<InvoiceConfig>;
-    update(dto: UpdateInvoiceConfigDto): Promise<{
+    update(dto: UpdateInvoiceConfigDto, storeId: number): Promise<{
         title: string;
         message: string;
     }>;
-    remove(id: number): Promise<{
+    remove(id: number, storeId: number): Promise<{
         message: string;
     }>;
 }

@@ -56,37 +56,38 @@ let RoyaltyService = class RoyaltyService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        return this.royaltyModel.findOne({ where: { id } });
+    async findOne(id, storeId) {
+        return this.royaltyModel.findOne({ where: { id, id_store: storeId } });
     }
     async create(internal_user_id, internal_store_id, dto) {
         dto.created_by = internal_user_id;
         dto.id_store = internal_store_id;
         return this.royaltyModel.create(dto);
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.royaltyModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.royaltyModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.royaltyModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: dto.id, id_store: storeId }, returning: true });
     }
     async processRoyalty(dto, transaction) {
         const royaltyAmount = dto?.payment?.loyalty_points || 0;
@@ -177,12 +178,12 @@ let RoyaltyService = class RoyaltyService {
         await this.sequelize.query(sql, { transaction });
     }
     async generatePoints(clientId, moneyAmount, saleId, userId, storeId, transaction) {
-        if (moneyAmount <= 0)
-            return;
+        if (!clientId || moneyAmount <= 0)
+            return 0;
         const rate = Number(process.env.ROYALTY_SALE_RATE || 0);
         const points = moneyAmount * rate;
         if (points <= 0)
-            return;
+            return 0;
         await this.royaltyModel.create({
             id_client: clientId,
             id_sale: saleId,
@@ -191,6 +192,7 @@ let RoyaltyService = class RoyaltyService {
             id_store: storeId,
             expire_at: this.calculateExpireDate(),
         }, { transaction });
+        return points;
     }
     calculateExpireDate() {
         const months = Number(process.env.ROYALTY_EXPIRE_MONTHS || 0);

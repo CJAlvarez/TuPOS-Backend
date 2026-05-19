@@ -70,8 +70,10 @@ export class InvoicesService {
     };
   }
 
-  async findOne(id: number): Promise<Invoice> {
-    const invoice = await this.invoiceModel.findByPk(id);
+  async findOne(id: number, storeId?: number): Promise<Invoice> {
+    const where: any = { id };
+    if (storeId) where.id_store = storeId;
+    const invoice = await this.invoiceModel.findOne({ where });
     if (!invoice) throw new NotFoundException('Invoice not found');
     return invoice;
   }
@@ -165,14 +167,18 @@ export class InvoicesService {
     };
   }
 
-  async update(id: number, dto: UpdateInvoiceDto): Promise<Invoice> {
-    const invoice = await this.invoiceModel.findByPk(id);
+  async update(id: number, dto: UpdateInvoiceDto, storeId?: number): Promise<Invoice> {
+    const where: any = { id };
+    if (storeId) where.id_store = storeId;
+    const invoice = await this.invoiceModel.findOne({ where });
     if (!invoice) throw new NotFoundException('Invoice not found');
     return invoice.update(dto as any);
   }
 
-  async remove(id: number): Promise<{ message: string }> {
-    const invoice = await this.invoiceModel.findByPk(id);
+  async remove(id: number, storeId?: number): Promise<{ message: string }> {
+    const where: any = { id };
+    if (storeId) where.id_store = storeId;
+    const invoice = await this.invoiceModel.findOne({ where });
     if (!invoice) throw new NotFoundException('Invoice not found');
     await invoice.destroy();
     return { message: 'Factura eliminada' };

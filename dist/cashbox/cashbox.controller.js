@@ -34,26 +34,26 @@ let CashboxController = class CashboxController {
     findAll(req, query) {
         return this.cashboxService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.cashboxService.findOne(Number(id));
+    findOne(req, id) {
+        return this.cashboxService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.cashboxService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.cashboxService.update(dto);
+    update(req, dto) {
+        return this.cashboxService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.cashboxService.remove(req.internal_user_id, Number(id));
+        return this.cashboxService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.cashboxService.updateStatus(req.internal_user_id, dto);
+        return this.cashboxService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
     openCashbox(req, dto) {
-        return this.cashboxService.openCashbox(req.internal_user_id, dto);
+        return this.cashboxService.openCashbox(req.internal_user_id, dto, req.internal_store_id);
     }
     closeCashbox(req, dto) {
-        return this.cashboxService.closeCashbox(req.internal_user_id, dto);
+        return this.cashboxService.closeCashbox(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.CashboxController = CashboxController;
@@ -72,9 +72,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una caja por ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Caja encontrada', type: cashbox_entity_1.Cashbox }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Caja no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], CashboxController.prototype, "findOne", null);
 __decorate([
@@ -93,9 +94,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar una caja' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Caja actualizada', type: cashbox_entity_1.Cashbox }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_cashbox_dto_1.UpdateCashboxDto]),
+    __metadata("design:paramtypes", [Object, update_cashbox_dto_1.UpdateCashboxDto]),
     __metadata("design:returntype", Promise)
 ], CashboxController.prototype, "update", null);
 __decorate([

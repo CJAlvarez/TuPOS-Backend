@@ -31,17 +31,17 @@ let ClientsController = class ClientsController {
     async getClients(req, query) {
         return this.clientsService.getClients(query, req.internal_store_id);
     }
-    async getClientDetail(id) {
-        return this.clientsService.getClientDetail(id);
+    async getClientDetail(req, id) {
+        return this.clientsService.getClientDetail(id, req.internal_store_id);
     }
     async insertClient(req, createClientDto) {
         return this.clientsService.insertClient(createClientDto, req.internal_store_id, req.internal_user_id);
     }
-    async updateClient(updateClientDto) {
-        return this.clientsService.updateClient(updateClientDto);
+    async updateClient(req, updateClientDto) {
+        return this.clientsService.updateClient(updateClientDto, req.internal_store_id);
     }
     async updateClientStatus(req, body) {
-        return this.clientsService.updateClientStatus(req.internal_user_id, body);
+        return this.clientsService.updateClientStatus(req.internal_user_id, body, req.internal_store_id);
     }
 };
 exports.ClientsController = ClientsController;
@@ -64,9 +64,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener detalle de cliente' }),
     (0, swagger_1.ApiParam)({ name: 'id', type: Number }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Detalle de cliente' }),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], ClientsController.prototype, "getClientDetail", null);
 __decorate([
@@ -87,9 +88,10 @@ __decorate([
     (0, swagger_1.ApiBody)({ type: update_client_dto_1.UpdateClientDto }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Cliente actualizado' }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_client_dto_1.UpdateClientDto]),
+    __metadata("design:paramtypes", [Object, update_client_dto_1.UpdateClientDto]),
     __metadata("design:returntype", Promise)
 ], ClientsController.prototype, "updateClient", null);
 __decorate([

@@ -29,15 +29,15 @@ export class SaleController {
   @ApiOperation({ summary: 'Obtener una venta por ID' })
   @ApiResponse({ status: 200, description: 'Venta encontrada', type: Sale })
   @ApiResponse({ status: 404, description: 'Venta no encontrada' })
-  findOne(@Param('id') id: string): Promise<Sale | null> {
-    return this.saleService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Sale | null> {
+    return this.saleService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Crear una venta' })
   @ApiResponse({ status: 201, description: 'Venta creada', type: Sale })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  create(@Request() req, @Body() data: CreateSaleDto): Promise<Sale> {
+  create(@Request() req, @Body() data: CreateSaleDto): Promise<any> {
     return this.saleService.create(req.internal_user_id, req.internal_store_id, data);
   }
 
@@ -45,15 +45,15 @@ export class SaleController {
   @ApiOperation({ summary: 'Actualizar una venta' })
   @ApiResponse({ status: 200, description: 'Venta actualizada', type: Sale })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateSaleDto): Promise<[number, Sale[]]> {
-    return this.saleService.update(dto);
+  update(@Request() req, @Body() dto: UpdateSaleDto): Promise<[number, Sale[]]> {
+    return this.saleService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una venta (soft delete)' })
   @ApiResponse({ status: 200, description: 'Venta eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.saleService.remove(req.internal_user_id, Number(id));
+    return this.saleService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class SaleController {
     @Request() req,
     @Body() dto: UpdateSaleStatusDto,
   ): Promise<[number, Sale[]]> {
-    return this.saleService.updateStatus(req.internal_user_id, dto);
+    return this.saleService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

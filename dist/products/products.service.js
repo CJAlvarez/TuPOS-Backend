@@ -86,10 +86,11 @@ let ProductsService = class ProductsService {
             skip: 0,
         };
     }
-    async findOne(id) {
+    async findOne(id, storeId) {
         return this.productModel.findOne({
             where: {
                 id,
+                id_store: storeId,
                 deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
@@ -99,29 +100,30 @@ let ProductsService = class ProductsService {
         dto.id_store = internal_store_id;
         return this.productModel.create(dto);
     }
-    async update(dto) {
+    async update(dto, storeId) {
         return this.productModel.update(dto, {
-            where: { id: dto.id },
+            where: { id: dto.id, id_store: storeId },
             returning: true,
         });
     }
-    async remove(internal_user_id, id) {
+    async remove(internal_user_id, id, storeId) {
         await this.productModel.update({
             deleted_at: new Date(),
             deleted_by: internal_user_id,
         }, {
             where: {
                 id,
-                deleted_at: { [sequelize_2.Op.not]: null },
+                id_store: storeId,
+                deleted_at: { [sequelize_2.Op.is]: null },
             },
         });
         return { title: 'Operación exitosa' };
     }
-    async updateStatus(internal_user_id, dto) {
+    async updateStatus(internal_user_id, dto, storeId) {
         return this.productModel.update({
             disabled_at: dto.enable ? null : new Date(),
             disabled_by: dto.enable ? null : internal_user_id,
-        }, { where: { id: dto.id }, returning: true });
+        }, { where: { id: dto.id, id_store: storeId }, returning: true });
     }
 };
 exports.ProductsService = ProductsService;

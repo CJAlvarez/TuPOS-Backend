@@ -43,8 +43,8 @@ export class CampaignService {
     };
   }
 
-  async findOne(id: number): Promise<Campaign | null> {
-    return this.campaignModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Campaign | null> {
+    return this.campaignModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -57,14 +57,14 @@ export class CampaignService {
     return this.campaignModel.create(dto as any);
   }
 
-  async update(dto: UpdateCampaignDto): Promise<[number, Campaign[]]> {
+  async update(dto: UpdateCampaignDto, storeId: number): Promise<[number, Campaign[]]> {
     return this.campaignModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.campaignModel.update(
       {
         deleted_at: new Date(),
@@ -73,6 +73,7 @@ export class CampaignService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -83,13 +84,14 @@ export class CampaignService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateCampaignStatusDto,
+    storeId: number,
   ): Promise<[number, Campaign[]]> {
     return this.campaignModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 }

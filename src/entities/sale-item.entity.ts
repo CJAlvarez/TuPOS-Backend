@@ -11,6 +11,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Product } from './product.entity';
+import { Inventory } from './inventory.entity';
 
 @Table({
   tableName: 'sale_items',
@@ -36,6 +37,13 @@ export class SaleItem extends Model<SaleItem> {
 
   @BelongsTo(() => Product)
   product: Product;
+
+  @ForeignKey(() => Inventory)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  id_inventory?: number;
+
+  @BelongsTo(() => Inventory)
+  inventory?: Inventory;
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 1 })
   quantity: number;
@@ -76,6 +84,7 @@ export class SaleItem extends Model<SaleItem> {
 export interface SaleItemCreationAttributes {
   id_sale: number;
   id_product: number;
+  id_inventory?: number;
   quantity: number;
   price: number;
   discount: number;

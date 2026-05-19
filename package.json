@@ -1,6 +1,6 @@
 {
   "name": "tupos-backend",
-  "version": "26.0.4",
+  "version": "26.0.5",
   "description": "",
   "author": {
     "name": "CJ Alvarez",
@@ -13,7 +13,7 @@
     "build:prod": "nest build && node scripts/create-dist-package.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "migration:generate": "sequelize-cli migration:generate --name",
@@ -25,7 +25,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "clean:mac": "find . -name '._*' -not -path './.git/*' -delete && echo 'Done'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

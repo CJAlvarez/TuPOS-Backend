@@ -43,8 +43,8 @@ export class DiscountRuleService {
     };
   }
 
-  async findOne(id: number): Promise<DiscountRule | null> {
-    return this.discountRuleModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<DiscountRule | null> {
+    return this.discountRuleModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -57,14 +57,14 @@ export class DiscountRuleService {
     return this.discountRuleModel.create(dto as any);
   }
 
-  async update(dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]> {
+  async update(dto: UpdateDiscountRuleDto, storeId: number): Promise<[number, DiscountRule[]]> {
     return this.discountRuleModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.discountRuleModel.update(
       {
         deleted_at: new Date(),
@@ -73,6 +73,7 @@ export class DiscountRuleService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -83,13 +84,14 @@ export class DiscountRuleService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateDiscountRuleStatusDto,
+    storeId: number,
   ): Promise<[number, DiscountRule[]]> {
     return this.discountRuleModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 }

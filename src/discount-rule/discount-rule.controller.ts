@@ -29,8 +29,8 @@ export class DiscountRuleController {
   @ApiOperation({ summary: 'Obtener una regla de descuento por ID' })
   @ApiResponse({ status: 200, description: 'Regla de descuento encontrada', type: DiscountRule })
   @ApiResponse({ status: 404, description: 'Regla de descuento no encontrada' })
-  findOne(@Param('id') id: string): Promise<DiscountRule | null> {
-    return this.discountRuleService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<DiscountRule | null> {
+    return this.discountRuleService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class DiscountRuleController {
   @ApiOperation({ summary: 'Actualizar una regla de descuento' })
   @ApiResponse({ status: 200, description: 'Regla de descuento actualizada', type: DiscountRule })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]> {
-    return this.discountRuleService.update(dto);
+  update(@Request() req, @Body() dto: UpdateDiscountRuleDto): Promise<[number, DiscountRule[]]> {
+    return this.discountRuleService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una regla de descuento (soft delete)' })
   @ApiResponse({ status: 200, description: 'Regla de descuento eliminada' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.discountRuleService.remove(req.internal_user_id, Number(id));
+    return this.discountRuleService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class DiscountRuleController {
     @Request() req,
     @Body() dto: UpdateDiscountRuleStatusDto,
   ): Promise<[number, DiscountRule[]]> {
-    return this.discountRuleService.updateStatus(req.internal_user_id, dto);
+    return this.discountRuleService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

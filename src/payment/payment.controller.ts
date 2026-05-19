@@ -29,8 +29,8 @@ export class PaymentController {
   @ApiOperation({ summary: 'Obtener un pago por ID' })
   @ApiResponse({ status: 200, description: 'Pago encontrado', type: Payment })
   @ApiResponse({ status: 404, description: 'Pago no encontrado' })
-  findOne(@Param('id') id: string): Promise<Payment | null> {
-    return this.paymentService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Payment | null> {
+    return this.paymentService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class PaymentController {
   @ApiOperation({ summary: 'Actualizar un pago' })
   @ApiResponse({ status: 200, description: 'Pago actualizado', type: Payment })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdatePaymentDto): Promise<[number, Payment[]]> {
-    return this.paymentService.update(dto);
+  update(@Request() req, @Body() dto: UpdatePaymentDto): Promise<[number, Payment[]]> {
+    return this.paymentService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un pago (soft delete)' })
   @ApiResponse({ status: 200, description: 'Pago eliminado' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.paymentService.remove(req.internal_user_id, Number(id));
+    return this.paymentService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -65,6 +65,6 @@ export class PaymentController {
     @Request() req,
     @Body() dto: UpdatePaymentStatusDto,
   ): Promise<[number, Payment[]]> {
-    return this.paymentService.updateStatus(req.internal_user_id, dto);
+    return this.paymentService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

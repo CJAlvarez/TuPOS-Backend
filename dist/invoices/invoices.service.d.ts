@@ -14,10 +14,10 @@ export declare class InvoicesService {
         list: Invoice[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Invoice>;
+    findOne(id: number, storeId?: number): Promise<Invoice>;
     create(internal_user_id: any, internal_store_id: number, dto: CreateInvoiceDto): Promise<any>;
-    update(id: number, dto: UpdateInvoiceDto): Promise<Invoice>;
-    remove(id: number): Promise<{
+    update(id: number, dto: UpdateInvoiceDto, storeId?: number): Promise<Invoice>;
+    remove(id: number, storeId?: number): Promise<{
         message: string;
     }>;
 }

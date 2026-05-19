@@ -50,8 +50,8 @@ export class ClientsController {
   @ApiOperation({ summary: 'Obtener detalle de cliente' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Detalle de cliente' })
-  async getClientDetail(@Param('id', ParseIntPipe) id: number) {
-    return this.clientsService.getClientDetail(id);
+  async getClientDetail(@Request() req, @Param('id', ParseIntPipe) id: number) {
+    return this.clientsService.getClientDetail(id, req.internal_store_id);
   }
 
   @Post()
@@ -68,8 +68,8 @@ export class ClientsController {
   @ApiBody({ type: UpdateClientDto })
   @ApiResponse({ status: 200, description: 'Cliente actualizado' })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async updateClient(@Body() updateClientDto: UpdateClientDto) {
-    return this.clientsService.updateClient(updateClientDto);
+  async updateClient(@Request() req, @Body() updateClientDto: UpdateClientDto) {
+    return this.clientsService.updateClient(updateClientDto, req.internal_store_id);
   }
 
   @Put('status')
@@ -81,6 +81,6 @@ export class ClientsController {
     @Request() req,
     @Body() body: UpdateClientStatusDto,
   ) {
-    return this.clientsService.updateClientStatus(req.internal_user_id, body);
+    return this.clientsService.updateClientStatus(req.internal_user_id, body, req.internal_store_id);
   }
 }

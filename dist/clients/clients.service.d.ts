@@ -45,19 +45,19 @@ export declare class ClientsService {
         }[];
         skip: number;
     }>;
-    getClientDetail(id: number): Promise<Client>;
+    getClientDetail(id: number, storeId?: number): Promise<Client>;
     insertClient(createClientDto: CreateClientDto, id_store: number, id_user: number): Promise<{
         title: string;
         message: string;
         id_user: number;
     }>;
-    updateClient(updateClientDto: UpdateClientDto): Promise<{
+    updateClient(updateClientDto: UpdateClientDto, storeId: number): Promise<{
         title: string;
         message: string;
     }>;
-    updateClientStatus(internal_user_id: number, body: UpdateClientStatusDto): Promise<{
+    updateClientStatus(internal_user_id: number, body: UpdateClientStatusDto, storeId: number): Promise<{
         title: string;
         message: string;
     }>;
-    findByUserId(id_user: number): Promise<Client>;
+    findByUserId(id_user: number, storeId?: number): Promise<Client>;
 }

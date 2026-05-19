@@ -8,14 +8,14 @@ export declare class StoreService {
     private readonly storeModel;
     private readonly utilsService;
     constructor(storeModel: typeof Store, utilsService: UtilsService);
-    findAll(query: GetStoresQueryDto): Promise<{
+    findAll(query: GetStoresQueryDto, storeId: number): Promise<{
         count: number;
         list: Store[];
         skip: number;
     }>;
-    findOne(id: number): Promise<Store | null>;
+    findOne(id: number, storeId: number): Promise<Store | null>;
     create(internal_user_id: number, dto: CreateStoreDto): Promise<Store>;
-    update(dto: UpdateStoreDto): Promise<[number, Store[]]>;
-    remove(internal_user_id: number, id: number): Promise<any>;
-    updateStatus(internal_user_id: number, dto: UpdateStoreStatusDto): Promise<[number, Store[]]>;
+    update(dto: UpdateStoreDto, storeId: number): Promise<[number, Store[]]>;
+    remove(internal_user_id: number, id: number, storeId: number): Promise<any>;
+    updateStatus(internal_user_id: number, dto: UpdateStoreStatusDto, storeId: number): Promise<[number, Store[]]>;
 }

@@ -16,9 +16,9 @@ export class StoreService {
     private readonly utilsService: UtilsService,
   ) {}
 
-  async findAll(query: GetStoresQueryDto) {
+  async findAll(query: GetStoresQueryDto, storeId: number) {
     const { search_word, limit = 10, skip = 0 } = query;
-    const where: any = {};
+    const where: any = { id: storeId };
 
     where.deleted_at = { [Op.is]: null };
 
@@ -46,8 +46,8 @@ export class StoreService {
     };
   }
 
-  async findOne(id: number): Promise<Store | null> {
-    return this.storeModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Store | null> {
+    return this.storeModel.findOne({ where: { id: storeId } });
   }
 
   async create(internal_user_id: number, dto: CreateStoreDto): Promise<Store> {
@@ -55,14 +55,14 @@ export class StoreService {
     return this.storeModel.create(dto as any);
   }
 
-  async update(dto: UpdateStoreDto): Promise<[number, Store[]]> {
+  async update(dto: UpdateStoreDto, storeId: number): Promise<[number, Store[]]> {
     return this.storeModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.storeModel.update(
       {
         deleted_at: new Date(),
@@ -70,7 +70,7 @@ export class StoreService {
       },
       {
         where: {
-          id,
+          id: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -81,13 +81,14 @@ export class StoreService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateStoreStatusDto,
+    storeId: number,
   ): Promise<[number, Store[]]> {
     return this.storeModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: storeId }, returning: true },
     );
   }
 }

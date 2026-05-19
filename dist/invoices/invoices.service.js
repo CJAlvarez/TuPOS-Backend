@@ -67,8 +67,11 @@ let InvoicesService = InvoicesService_1 = class InvoicesService {
             skip: paginate.skip,
         };
     }
-    async findOne(id) {
-        const invoice = await this.invoiceModel.findByPk(id);
+    async findOne(id, storeId) {
+        const where = { id };
+        if (storeId)
+            where.id_store = storeId;
+        const invoice = await this.invoiceModel.findOne({ where });
         if (!invoice)
             throw new common_1.NotFoundException('Invoice not found');
         return invoice;
@@ -154,14 +157,20 @@ let InvoicesService = InvoicesService_1 = class InvoicesService {
             invoice: createdInvoice,
         };
     }
-    async update(id, dto) {
-        const invoice = await this.invoiceModel.findByPk(id);
+    async update(id, dto, storeId) {
+        const where = { id };
+        if (storeId)
+            where.id_store = storeId;
+        const invoice = await this.invoiceModel.findOne({ where });
         if (!invoice)
             throw new common_1.NotFoundException('Invoice not found');
         return invoice.update(dto);
     }
-    async remove(id) {
-        const invoice = await this.invoiceModel.findByPk(id);
+    async remove(id, storeId) {
+        const where = { id };
+        if (storeId)
+            where.id_store = storeId;
+        const invoice = await this.invoiceModel.findOne({ where });
         if (!invoice)
             throw new common_1.NotFoundException('Invoice not found');
         await invoice.destroy();

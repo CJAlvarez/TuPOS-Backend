@@ -49,8 +49,8 @@ export class NotificationService {
     };
   }
 
-  async findOne(id: number): Promise<Notification | null> {
-    return this.notificationModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<Notification | null> {
+    return this.notificationModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -63,14 +63,14 @@ export class NotificationService {
     return this.notificationModel.create(dto as any);
   }
 
-  async update(dto: UpdateNotificationDto): Promise<[number, Notification[]]> {
+  async update(dto: UpdateNotificationDto, storeId: number): Promise<[number, Notification[]]> {
     return this.notificationModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.notificationModel.update(
       {
         deleted_by: internal_user_id,
@@ -79,6 +79,7 @@ export class NotificationService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null as any },
         },
       },
@@ -89,38 +90,41 @@ export class NotificationService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateNotificationStatusDto,
+    storeId: number,
   ): Promise<[number, Notification[]]> {
     return this.notificationModel.update(
       {
         id_status: dto.status,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 
   async updateSeen(
     internal_user_id: number,
     dto: UpdateNotificationSeenDto,
+    storeId: number,
   ): Promise<[number, Notification[]]> {
     return this.notificationModel.update(
       {
         seen_by: internal_user_id,
         seen_at: new Date(),
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 
   async updateArchived(
     internal_user_id: number,
     dto: UpdateNotificationArchivedDto,
+    storeId: number,
   ): Promise<[number, Notification[]]> {
     return this.notificationModel.update(
       {
         archived_by: internal_user_id,
         archived_at: new Date(),
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 }

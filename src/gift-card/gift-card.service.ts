@@ -47,8 +47,8 @@ export class GiftCardService {
     };
   }
 
-  async findOne(id: number): Promise<GiftCard | null> {
-    return this.giftCardModel.findOne({ where: { id } });
+  async findOne(id: number, storeId: number): Promise<GiftCard | null> {
+    return this.giftCardModel.findOne({ where: { id, id_store: storeId } });
   }
 
   async create(
@@ -72,15 +72,15 @@ export class GiftCardService {
     return this.giftCardModel.create(giftCardData);
   }
 
-  async update(dto: UpdateGiftCardDto): Promise<[number, GiftCard[]]> {
+  async update(dto: UpdateGiftCardDto, storeId: number): Promise<[number, GiftCard[]]> {
     dto.current_balance = dto.initial_balance;
     return this.giftCardModel.update(dto, {
-      where: { id: dto.id },
+      where: { id: dto.id, id_store: storeId },
       returning: true,
     });
   }
 
-  async remove(internal_user_id: number, id: number): Promise<any> {
+  async remove(internal_user_id: number, id: number, storeId: number): Promise<any> {
     await this.giftCardModel.update(
       {
         deleted_at: new Date(),
@@ -89,6 +89,7 @@ export class GiftCardService {
       {
         where: {
           id,
+          id_store: storeId,
           deleted_at: { [Op.is]: null },
         },
       },
@@ -99,13 +100,14 @@ export class GiftCardService {
   async updateStatus(
     internal_user_id: number,
     dto: UpdateGiftCardStatusDto,
+    storeId: number,
   ): Promise<[number, GiftCard[]]> {
     return this.giftCardModel.update(
       {
         disabled_at: dto.enable ? null : new Date(),
         disabled_by: dto.enable ? null : internal_user_id,
       },
-      { where: { id: dto.id }, returning: true },
+      { where: { id: dto.id, id_store: storeId }, returning: true },
     );
   }
 

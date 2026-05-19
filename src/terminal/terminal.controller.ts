@@ -40,8 +40,8 @@ export class TerminalController {
   @ApiOperation({ summary: 'Obtener un terminal por ID' })
   @ApiResponse({ status: 200, description: 'Terminal encontrado', type: Terminal })
   @ApiResponse({ status: 404, description: 'Terminal no encontrado' })
-  findOne(@Param('id') id: string): Promise<Terminal | null> {
-    return this.terminalService.findOne(Number(id));
+  findOne(@Request() req, @Param('id') id: string): Promise<Terminal | null> {
+    return this.terminalService.findOne(Number(id), req.internal_store_id);
   }
 
   @Post()
@@ -56,15 +56,15 @@ export class TerminalController {
   @ApiOperation({ summary: 'Actualizar un terminal' })
   @ApiResponse({ status: 200, description: 'Terminal actualizado', type: Terminal })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  update(@Body() dto: UpdateTerminalDto): Promise<[number, Terminal[]]> {
-    return this.terminalService.update(dto);
+  update(@Request() req, @Body() dto: UpdateTerminalDto): Promise<[number, Terminal[]]> {
+    return this.terminalService.update(dto, req.internal_store_id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un terminal (soft delete)' })
   @ApiResponse({ status: 200, description: 'Terminal eliminado' })
   remove(@Request() req, @Param('id') id: string): Promise<number> {
-    return this.terminalService.remove(req.internal_user_id, Number(id));
+    return this.terminalService.remove(req.internal_user_id, Number(id), req.internal_store_id);
   }
 
   @Put('status')
@@ -76,6 +76,6 @@ export class TerminalController {
     @Request() req,
     @Body() dto: UpdateTerminalStatusDto,
   ): Promise<[number, Terminal[]]> {
-    return this.terminalService.updateStatus(req.internal_user_id, dto);
+    return this.terminalService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
   }
 }

@@ -32,20 +32,20 @@ let GiftCardController = class GiftCardController {
     findAll(req, query) {
         return this.giftCardService.findAll(query, req.internal_store_id);
     }
-    findOne(id) {
-        return this.giftCardService.findOne(Number(id));
+    findOne(req, id) {
+        return this.giftCardService.findOne(Number(id), req.internal_store_id);
     }
     create(req, data) {
         return this.giftCardService.create(req.internal_user_id, req.internal_store_id, data);
     }
-    update(dto) {
-        return this.giftCardService.update(dto);
+    update(req, dto) {
+        return this.giftCardService.update(dto, req.internal_store_id);
     }
     remove(req, id) {
-        return this.giftCardService.remove(req.internal_user_id, Number(id));
+        return this.giftCardService.remove(req.internal_user_id, Number(id), req.internal_store_id);
     }
     updateStatus(req, dto) {
-        return this.giftCardService.updateStatus(req.internal_user_id, dto);
+        return this.giftCardService.updateStatus(req.internal_user_id, dto, req.internal_store_id);
     }
 };
 exports.GiftCardController = GiftCardController;
@@ -64,9 +64,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una gift card por ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Gift card encontrada', type: gift_card_entity_1.GiftCard }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Gift card no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], GiftCardController.prototype, "findOne", null);
 __decorate([
@@ -85,9 +86,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar una gift card' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Gift card actualizada', type: gift_card_entity_1.GiftCard }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_gift_card_dto_1.UpdateGiftCardDto]),
+    __metadata("design:paramtypes", [Object, update_gift_card_dto_1.UpdateGiftCardDto]),
     __metadata("design:returntype", Promise)
 ], GiftCardController.prototype, "update", null);
 __decorate([
