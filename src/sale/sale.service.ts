@@ -67,7 +67,7 @@ export class SaleService {
     internal_user_id: number,
     internal_store_id: number,
     dto: CreateSaleDto,
-  ): Promise<Sale> {
+  ): Promise<any> {
     const transaction = await this.sequelize.transaction();
 
     try {
@@ -97,7 +97,7 @@ export class SaleService {
         transaction,
       );
 
-      await this.royaltyService.generatePoints(
+      const loyaltyPointsEarned = await this.royaltyService.generatePoints(
         dto.id_client,
         royaltyResult.moneyAmount,
         sale.id,
@@ -116,7 +116,7 @@ export class SaleService {
       );
 
       await transaction.commit();
-      return sale;
+      return { ...sale.toJSON(), loyalty_points_earned: loyaltyPointsEarned };
     } catch (error) {
       await transaction.rollback();
       throw error;

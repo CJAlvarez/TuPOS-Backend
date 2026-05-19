@@ -37,7 +37,7 @@ export class SaleController {
   @ApiOperation({ summary: 'Crear una venta' })
   @ApiResponse({ status: 201, description: 'Venta creada', type: Sale })
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  create(@Request() req, @Body() data: CreateSaleDto): Promise<Sale> {
+  create(@Request() req, @Body() data: CreateSaleDto): Promise<any> {
     return this.saleService.create(req.internal_user_id, req.internal_store_id, data);
   }
 

@@ -178,12 +178,12 @@ let RoyaltyService = class RoyaltyService {
         await this.sequelize.query(sql, { transaction });
     }
     async generatePoints(clientId, moneyAmount, saleId, userId, storeId, transaction) {
-        if (moneyAmount <= 0)
-            return;
+        if (!clientId || moneyAmount <= 0)
+            return 0;
         const rate = Number(process.env.ROYALTY_SALE_RATE || 0);
         const points = moneyAmount * rate;
         if (points <= 0)
-            return;
+            return 0;
         await this.royaltyModel.create({
             id_client: clientId,
             id_sale: saleId,
@@ -192,6 +192,7 @@ let RoyaltyService = class RoyaltyService {
             id_store: storeId,
             expire_at: this.calculateExpireDate(),
         }, { transaction });
+        return points;
     }
     calculateExpireDate() {
         const months = Number(process.env.ROYALTY_EXPIRE_MONTHS || 0);

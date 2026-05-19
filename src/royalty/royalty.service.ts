@@ -220,14 +220,14 @@ export class RoyaltyService {
     userId,
     storeId,
     transaction,
-  ) {
-    if (moneyAmount <= 0) return;
+  ): Promise<number> {
+    if (!clientId || moneyAmount <= 0) return 0;
 
     const rate = Number(process.env.ROYALTY_SALE_RATE || 0);
 
     const points = moneyAmount * rate;
 
-    if (points <= 0) return;
+    if (points <= 0) return 0;
 
     await this.royaltyModel.create(
       {
@@ -240,6 +240,8 @@ export class RoyaltyService {
       } as any,
       { transaction },
     );
+
+    return points;
   }
 
   private calculateExpireDate() {

@@ -31,6 +31,6 @@ export declare class RoyaltyService {
     private validateMinUse;
     consumePointsFIFO(clientId: any, pointsToUse: any, transaction: any): Promise<void>;
     private bulkUpdatePoints;
-    generatePoints(clientId: any, moneyAmount: any, saleId: any, userId: any, storeId: any, transaction: any): Promise<void>;
+    generatePoints(clientId: any, moneyAmount: any, saleId: any, userId: any, storeId: any, transaction: any): Promise<number>;
     private calculateExpireDate;
 }

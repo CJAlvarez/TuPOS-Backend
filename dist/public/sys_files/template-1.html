@@ -1,0 +1,210 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+    <title>{{subject}}</title>
+    <!--[if !mso]><!-- -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<![endif]-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+
+    <!--[if (gte mso 9)|(IE)]><style type="text/css">
+body, table, td, a, p {font-family: Arial, sans-serif !important; font-size: 12px; font-weight: 300;}
+</style><![endif]-->
+    <!--[if mso]>
+        <xml>
+        <o:OfficeDocumentSettings>
+          <o:AllowPNG/>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+        </xml>
+        <![endif]-->
+    <!--[if lte mso 11]>
+        <style type="text/css">
+          .mj-outlook-group-fix { width:100% !important; }
+        </style>
+        <![endif]-->
+    <style type="text/css">
+        @media only screen and (min-width:480px) {
+            .mj-column-per-100 {
+                width: 100% !important;
+                max-width: 100%;
+            }
+        }
+    </style>
+    <style type="text/css">
+        [owa] .mj-column-per-100 {
+            width: 100% !important;
+            max-width: 100%;
+        }
+    </style>
+    <style type="text/css">
+        @media only screen and (max-width:480px) {
+            table.mj-full-width-mobile {
+                width: 100% !important;
+            }
+
+            td.mj-full-width-mobile {
+                width: auto !important;
+            }
+        }
+    </style>
+    <style>
+        * {
+            font-family: "Nexa";
+        }
+
+        td {
+            width: 88% !important;
+        }
+
+        a {
+            color: #000;
+        }
+
+        .ii a[href] {
+            color: #F09C22 !important;
+        }
+    </style>
+</head>
+
+<body style="background: #eee; padding: 1rem;">
+    <table style="width: 480px;" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
+        <tbody>
+            <tr>
+                <td style="background: #fff; padding: 2rem 2.5rem 2rem 2.5rem; border-radius: 1rem 1rem 0 0;">
+                    <div style="display: flex; margin: auto;">
+
+                        <a href="https://tuposhn.com" target="_blank" style="height: 50%; margin:auto">
+                            <img style="height: 10rem; margin:auto" src="{{logo_dark}}" alt="logo-1" border="0">
+                        </a>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="background: #fff; padding: 0 3rem 1rem 3rem;">
+                    <p style="font-size: 20px; text-align: left;">
+                        {{#each content}}
+
+                        {{#if (ifEquals this.type "skip")}}
+                        <br />
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "title")}}
+                        <span style="width: 100%; font-size: 25px; font-weight: 900; text-align: center; color: #F09C22; margin: 0;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "small")}}
+                        <span style="font-size: 12px; line-height: 12px; text-align: left; color: #000;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "normal")}}
+                        <span style="font-size: 15px; line-height: 15px; text-align: left; color: #000;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "bold")}}
+                        <span style="font-size: 15px; line-height: 15px; font-weight: 600; text-align: left; color: #000;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "blue")}}
+                        <span style="font-size: 15px; line-height: 15px; text-align: left; color: #ED9F6E;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "bold-blue")}}
+                        <span style="font-size: 15px; line-height: 15px; font-weight: 600; text-align: left; color: #ED9F6E;">{{this.text}}</span>
+                        {{/if}}
+
+                        {{#if (ifEquals this.type "button")}}
+                    <div style="width: 100%; display: flex;">
+                        <a href="{{this.ref}}" style="margin:auto;line-height:inherit;text-decoration:none;display:inline-block;color:#ffffff;background-color:#ED9F6E;border-radius:20px;width:auto;width:auto;border-top:1px solid #ED9F6E;border-right:1px solid #ED9F6E;border-bottom:1px solid #ED9F6E;border-left:1px solid #ED9F6E;padding-top:5px;padding-bottom:5px;font-family:Lato,Tahoma,Verdana,Segoe,sans-serif;text-align:center;word-break:keep-all" target="_blank">
+                            <span style="line-height:inherit;padding-left:20px;padding-right:20px;font-size:16px;display:inline-block">
+                                <span style="font-size:16px;line-height:2;word-break:break-word">{{this.text}}</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    {{/if}}
+
+                    {{/each}}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #ED9F6E; padding: 3rem 3rem 0 3rem;">
+                    <div style="display: flex;">
+                        <a href="https://tuposhn.com" target="_blank" style="height: 50%; margin:auto">
+                            <img style="height: 2rem; margin:auto" src="{{logo_light}}" alt="logo-2" border="0">
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #ED9F6E; padding: 0.5rem 3rem 0 3rem;">
+                    <div style="font-size: 17px; font-weight: 600; text-align: center; color: #fff;">Dirección:</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #ED9F6E; padding: 0.5rem 3rem 0 3rem;">
+                    <div style="font-size: 15px; font-weight: 500; text-align: center; color: #fff;">TUPOS Barrio El Centro, Frente al jardín de niños Angelina Cañadas </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #ED9F6E; padding: 0.5rem 3rem 0 3rem;">
+                    <div style="font-size: 15px; font-weight: 500; text-align: center; color: #fff;">Güinope, El Paraíso, Honduras</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #ED9F6E; padding: 0.5rem 3rem 1rem 3rem; border-radius: 0 0 1rem 1rem;">
+                    <div style="font-size: 15px; font-weight: 600; text-align: center; color: #fff;">Tel. <a style="color: #fff; text-decoration: none;" href="tel:98620408">9862-0408</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem 0 0.5rem 0;">
+                    <p style="font-size: 13px; color: #71706fff; text-align: center; margin: 0;">
+                        <a href="https://tuposhn.com" style="color: #71706fff; text-decoration: none; margin-left: 5px; margin-right: 5px;" target="_blank">
+                            Privacidad
+                        </a>
+                        |
+                        <a href="https://tuposhn.com" style="color: #71706fff; text-decoration: none; margin-left: 5px; margin-right: 5px;" target="_blank">
+                            Acerca de nosotros
+                        </a>
+                        |
+                        <a href="https://tuposhn.com" style="color: #71706fff; text-decoration: none; margin-left: 5px; margin-right: 5px;" target="_blank">
+                            Términos de uso
+                        </a>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0 0 1rem 0;">
+                    <p style="font-size: 13px; color: #71706fff; text-align: center; margin: 0;">
+                        © 2025 - {{year}}
+                        <a href="https://tuposhn.com" style="color: #71706fff; text-decoration: none;" target="_blank">
+                            TUPOS
+                        </a>
+                        by
+                        <a href="https://cjalvarez.com" style="color: #71706fff; text-decoration: none;" target="_blank">
+                            CJAlvarez
+                        </a>
+                        - All rights reserved
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: 11px; color: #71706fff; text-align: center; margin: 0;">
+                        <i>
+                            Recibes este correo porque contiene información importante acerca de tu cuenta en TUPOS.
+                        </i>
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

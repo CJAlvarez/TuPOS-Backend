@@ -6,7 +6,7 @@ Tipos de cambios: Added, Changed, Deprecated, Removed, Fixed, Security.
 
 Este documento recopila nuevas funcionalidades, mejoras, correcciones de errores y notas de seguridad que afectan al backend.
 
-## [v26.0.5] 2026-04-23
+## [v26.0.5] 2026-05-18
 ### Added
 - Se agrega el campo `id_inventory` (nullable) a `sale_items` para registrar de qué lote de inventario salió cada producto vendido, permitiendo trazabilidad completa.
 

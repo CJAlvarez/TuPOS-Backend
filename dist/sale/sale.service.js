@@ -82,10 +82,10 @@ let SaleService = class SaleService {
             await this.processItems(sale, dto.items, dto.id_store, transaction);
             await this.giftCardService.processGiftCards(dto.gift_cards, sale, internal_user_id, dto.id_store, transaction);
             const royaltyResult = await this.royaltyService.processRoyalty(dto, transaction);
-            await this.royaltyService.generatePoints(dto.id_client, royaltyResult.moneyAmount, sale.id, internal_user_id, dto.id_store, transaction);
+            const loyaltyPointsEarned = await this.royaltyService.generatePoints(dto.id_client, royaltyResult.moneyAmount, sale.id, internal_user_id, dto.id_store, transaction);
             await this.paymentService.createPayment(dto, sale, dto.id_store, internal_user_id, royaltyResult, transaction);
             await transaction.commit();
-            return sale;
+            return { ...sale.toJSON(), loyalty_points_earned: loyaltyPointsEarned };
         }
         catch (error) {
             await transaction.rollback();
