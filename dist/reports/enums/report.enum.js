@@ -21,6 +21,7 @@ var ReportCode;
     ReportCode["TOP_TRANSACTIONS"] = "TOP_TRANSACTIONS";
     ReportCode["LATEST_INVOICES"] = "LATEST_INVOICES";
     ReportCode["DAILY_SALES"] = "DAILY_SALES";
+    ReportCode["MONTHLY_SALES"] = "MONTHLY_SALES";
     ReportCode["INVENTORY_LOW"] = "INVENTORY_LOW";
     ReportCode["INVENTORY_EXPIRING"] = "INVENTORY_EXPIRING";
 })(ReportCode || (exports.ReportCode = ReportCode = {}));

@@ -16,6 +16,10 @@ import {
   DailySalesRequestDto,
   DailySalesResponseDto,
 } from './dto/daily-sales-reports.dto';
+import {
+  MonthlySalesRequestDto,
+  MonthlySalesResponseDto,
+} from './dto/monthly-sales-reports.dto';
 import { InventoryLowRequestDto, InventoryLowResponseDto } from './dto/inventory-low-reports.dto';
 import { InventoryExpiringRequestDto, InventoryExpiringResponseDto } from './dto/inventory-expiring-reports.dto';
 
@@ -42,6 +46,27 @@ export class ReportsController {
     @Query() dto: DailySalesRequestDto,
   ): Promise<DailySalesResponseDto> {
     return await this.reportsService.getDailySales(dto, req.internal_store_id);
+  }
+
+  // Reportes de Venta Mensual
+  @Get('monthly-sales')
+  @ApiOperation({
+    summary: 'Obtener ventas del mes',
+    description: 'Reporte de cálculo inmediato',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Ventas del mes obtenidas exitosamente',
+    type: MonthlySalesResponseDto,
+  })
+  async getMonthlySales(
+    @Request() req,
+    @Query() dto: MonthlySalesRequestDto,
+  ): Promise<MonthlySalesResponseDto> {
+    return await this.reportsService.getMonthlySales(
+      dto,
+      req.internal_store_id,
+    );
   }
 
   // Reportes de Inventario Bajo

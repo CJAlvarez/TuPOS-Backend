@@ -20,6 +20,7 @@ const verify_token_guard_1 = require("../auth/guards/verify-token.guard");
 const verify_disabled_user_guard_1 = require("../auth/guards/verify-disabled-user.guard");
 const verify_admin_admin_guard_1 = require("../auth/guards/verify-admin-admin.guard");
 const daily_sales_reports_dto_1 = require("./dto/daily-sales-reports.dto");
+const monthly_sales_reports_dto_1 = require("./dto/monthly-sales-reports.dto");
 const inventory_low_reports_dto_1 = require("./dto/inventory-low-reports.dto");
 const inventory_expiring_reports_dto_1 = require("./dto/inventory-expiring-reports.dto");
 let ReportsController = class ReportsController {
@@ -29,6 +30,9 @@ let ReportsController = class ReportsController {
     }
     async getDailySales(req, dto) {
         return await this.reportsService.getDailySales(dto, req.internal_store_id);
+    }
+    async getMonthlySales(req, dto) {
+        return await this.reportsService.getMonthlySales(dto, req.internal_store_id);
     }
     async getInventoryLow(req, dto) {
         return await this.reportsService.getInventoryLow(dto, req.internal_store_id);
@@ -55,6 +59,23 @@ __decorate([
     __metadata("design:paramtypes", [Object, daily_sales_reports_dto_1.DailySalesRequestDto]),
     __metadata("design:returntype", Promise)
 ], ReportsController.prototype, "getDailySales", null);
+__decorate([
+    (0, common_1.Get)('monthly-sales'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Obtener ventas del mes',
+        description: 'Reporte de cálculo inmediato',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Ventas del mes obtenidas exitosamente',
+        type: monthly_sales_reports_dto_1.MonthlySalesResponseDto,
+    }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, monthly_sales_reports_dto_1.MonthlySalesRequestDto]),
+    __metadata("design:returntype", Promise)
+], ReportsController.prototype, "getMonthlySales", null);
 __decorate([
     (0, common_1.Get)('inventory-low'),
     (0, swagger_1.ApiOperation)({
