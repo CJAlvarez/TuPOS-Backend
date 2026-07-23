@@ -14,13 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
-const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const enable_user_dto_1 = require("./dto/enable-user.dto");
+const update_user_status_dto_1 = require("./dto/update-user-status.dto");
 const delete_user_dto_1 = require("./dto/delete-user.dto");
+const get_users_query_dto_1 = require("./dto/get-users-query.dto");
 const user_entity_1 = require("../entities/user.entity");
 const verify_admin_admin_guard_1 = require("../auth/guards/verify-admin-admin.guard");
 const verify_disabled_user_guard_1 = require("../auth/guards/verify-disabled-user.guard");
@@ -42,14 +43,11 @@ let UsersController = class UsersController {
     remove(req, dto) {
         return this.service.remove(req.internal_user_id, dto);
     }
+    setUserStatus(req, body) {
+        return this.service.setUserStatus(req.internal_user_id, body);
+    }
     setEnableUser(req, body) {
         return this.service.setEnableUser(req.internal_user_id, body);
-    }
-    setUserAdmin(body) {
-        return this.service.setUserAdmin(body.id_user);
-    }
-    setUserClient(body) {
-        return this.service.setUserClient(body.id_user);
     }
     recoverPassword(body) {
         return this.service.recoverUserPassword(body.id_user, {
@@ -64,21 +62,23 @@ let UsersController = class UsersController {
 exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Obtener lista de usuarios' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener lista de administradores' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         schema: { example: { count: 100, list: [], skip: 0 } },
     }),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ transform: true })),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, get_users_query_dto_1.GetUsersQueryDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Crear usuario' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Crear administrador' }),
     (0, swagger_1.ApiResponse)({ status: 201, type: user_entity_1.User }),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -87,11 +87,9 @@ __decorate([
 ], UsersController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Actualizar usuario' }),
-    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar administrador' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: user_entity_1.User }),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([])),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -100,10 +98,10 @@ __decorate([
 ], UsersController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Eliminar usuario' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Eliminar administrador' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        schema: { example: { message: 'Usuario eliminado' } },
+        schema: { example: { message: 'Administrador eliminado' } },
     }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
@@ -112,8 +110,22 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "remove", null);
 __decorate([
+    (0, common_1.Put)('status'),
+    (0, swagger_1.ApiOperation)({ summary: 'Habilitar/deshabilitar administrador' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        schema: { example: { message: 'El administrador ha sido Habilitado.' } },
+    }),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, transform: true })),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_user_status_dto_1.UpdateUserStatusDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "setUserStatus", null);
+__decorate([
     (0, common_1.Put)('enable'),
-    (0, swagger_1.ApiOperation)({ summary: 'Habilitar/deshabilitar usuario' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Habilitar/deshabilitar administrador (legacy)' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         schema: { example: { message: 'Usuario habilitado' } },
@@ -124,30 +136,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, enable_user_dto_1.EnableUserDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "setEnableUser", null);
-__decorate([
-    (0, common_1.Put)('admin'),
-    (0, swagger_1.ApiOperation)({ summary: 'Convertir usuario en admin' }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        schema: { example: { message: 'Usuario convertido a admin' } },
-    }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "setUserAdmin", null);
-__decorate([
-    (0, common_1.Put)('client'),
-    (0, swagger_1.ApiOperation)({ summary: 'Convertir usuario en client' }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        schema: { example: { message: 'Usuario convertido a client' } },
-    }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "setUserClient", null);
 __decorate([
     (0, common_1.Put)('recover-password'),
     (0, swagger_1.ApiOperation)({ summary: 'Recuperar/restaurar contraseña' }),
@@ -165,7 +153,7 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtener accesos del usuario' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        schema: { example: { admin: true, partner: false, client: true } },
+        schema: { example: { admin: true } },
     }),
     __param(0, (0, common_1.Param)('id_user')),
     __metadata("design:type", Function),

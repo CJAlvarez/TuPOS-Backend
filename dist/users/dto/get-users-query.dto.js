@@ -9,35 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
-const swagger_1 = require("@nestjs/swagger");
+exports.GetUsersQueryDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
-const create_user_dto_1 = require("./create-user.dto");
-class UpdateUserDto extends (0, mapped_types_1.PartialType)(create_user_dto_1.CreateUserDto) {
-    user;
-    profile;
-    id_admin_type;
+class GetUsersQueryDto {
+    search_word;
+    skip = 0;
+    limit = 10;
 }
-exports.UpdateUserDto = UpdateUserDto;
+exports.GetUsersQueryDto = GetUsersQueryDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Datos de usuario a actualizar' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsObject)(),
-    __metadata("design:type", Object)
-], UpdateUserDto.prototype, "user", void 0);
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], GetUsersQueryDto.prototype, "search_word", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Datos de perfil a actualizar' }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsObject)(),
-    __metadata("design:type", Object)
-], UpdateUserDto.prototype, "profile", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Tipo de administrador' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
-], UpdateUserDto.prototype, "id_admin_type", void 0);
-//# sourceMappingURL=update-user.dto.js.map
+], GetUsersQueryDto.prototype, "skip", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
+], GetUsersQueryDto.prototype, "limit", void 0);
+//# sourceMappingURL=get-users-query.dto.js.map

@@ -1,11 +1,7 @@
+import { UserAdminDto } from './user-admin.dto';
+import { ProfileAdminDto } from './profile-admin.dto';
 export declare class CreateUserDto {
-    firstname: string;
-    lastname: string;
-    id_country: number;
-    identification: string;
-    id_gender: number;
-    email: string;
-    phone: string;
-    id_admin_type: number;
-    password?: string;
+    user: UserAdminDto;
+    profile: ProfileAdminDto;
+    id_admin_type?: number;
 }
