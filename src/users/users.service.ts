@@ -5,14 +5,19 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../entities/user.entity';
-import { Client } from '../entities/client.entity';
 import { Profile } from '../entities/profile.entity';
 import { Admin } from '../entities/admin.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EnableUserDto } from './dto/enable-user.dto';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
-import { Op } from 'sequelize';
+import {
+  GetUsersQueryDto,
+  UsersOrderableColumn,
+} from './dto/get-users-query.dto';
+import { Op, Order, OrderItem } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { UtilsService } from 'src/utils/utils.service';
 import * as bcrypt from 'bcrypt';
 import { JobsService } from 'src/jobs/jobs.service';
@@ -22,116 +27,181 @@ export class UsersService {
   constructor(
     @InjectModel(User)
     private readonly userModel: typeof User,
-    @InjectModel(Client)
-    private readonly clientModel: typeof Client,
     @InjectModel(Profile)
     private readonly profileModel: typeof Profile,
     @InjectModel(Admin)
     private readonly adminModel: typeof Admin,
     private readonly jobsService: JobsService,
     private readonly utilsService: UtilsService,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findAll(
-    query: any,
-  ): Promise<{ count: number; list: User[]; skip: number }> {
-    // Filtros y paginación
-    const { email, firstname, lastname, skip = 0, take = 20 } = query;
+    query: GetUsersQueryDto,
+  ): Promise<{ count: number; list: any[]; skip: number }> {
+    const { search_word, limit = 10, skip = 0, order_by, order_asc } = query;
+
     const where: any = {};
-    if (email) where.email = { [Op.iLike]: `%${email}%` };
-    if (firstname) where.firstname = { [Op.iLike]: `%${firstname}%` };
-    if (lastname) where.lastname = { [Op.iLike]: `%${lastname}%` };
-    const { count, rows } = await this.userModel.findAndCountAll({
+    where.deleted_at = { [Op.is]: null };
+    if (search_word) {
+      where[Op.or] = [
+        { '$profile.identification$': { [Op.like]: `%${search_word}%` } },
+        { '$profile.phone$': { [Op.like]: `%${search_word}%` } },
+        { '$user.email$': { [Op.like]: `%${search_word}%` } },
+        this.sequelize.literal(
+          `MATCH(profile.firstname, profile.lastname) AGAINST('${search_word
+            .trim()
+            .replace(/'/g, "''")}' IN BOOLEAN MODE)`,
+        ),
+      ];
+    }
+
+    const include = [
+      {
+        model: User,
+        as: 'user',
+        required: true,
+        attributes: { exclude: ['password', 'restoreCode'] },
+      },
+      { model: Profile, as: 'profile', required: true },
+    ];
+
+    const total = await this.adminModel.count({ include, where });
+    const paginate = this.utilsService.paginate(limit, skip, total, false);
+    const rows = await this.adminModel.findAll({
+      include,
       where,
-      offset: Number(skip),
-      limit: Number(take),
+      order: this.buildOrder(order_by, order_asc),
+      limit: paginate.limit,
+      offset: paginate.offset,
     });
-    return { count, list: rows, skip: Number(skip) };
+
+    return {
+      count: total,
+      list: rows.map((row) => row.toJSON()),
+      skip: paginate.skip,
+    };
   }
 
-  async create(internal_user_id: any, dto: CreateUserDto): Promise<User> {
-    // Validar unicidad de email
+  /**
+   * Translates the allow-listed order_by key into a Sequelize order option.
+   * Associated columns need the include reference form, plain columns do not.
+   * Defaults to profile name so pagination stays stable across pages.
+   */
+  private buildOrder(
+    order_by?: UsersOrderableColumn,
+    order_asc?: boolean,
+  ): Order {
+    const dir = order_asc ? 'ASC' : 'DESC';
+    const profile = { model: Profile, as: 'profile' };
+    const user = { model: User, as: 'user' };
+
+    const columns: Record<UsersOrderableColumn, OrderItem> = {
+      'profile.firstname': [profile, 'firstname', dir],
+      'profile.lastname': [profile, 'lastname', dir],
+      'profile.phone': [profile, 'phone', dir],
+      'user.email': [user, 'email', dir],
+      id_admin_type: ['id_admin_type', dir],
+      disabled_at: ['disabled_at', dir],
+    };
+
+    if (order_by && columns[order_by]) return [columns[order_by]];
+
+    return [
+      [profile, 'firstname', 'ASC'],
+      [profile, 'lastname', 'ASC'],
+    ];
+  }
+
+  async create(internal_user_id: any, dto: CreateUserDto): Promise<any> {
+    const { user, profile, id_admin_type } = dto;
+    if (!user || !profile) throw new BadRequestException('Datos incompletos');
+    if (!user.password) {
+      throw new BadRequestException('La contraseña es obligatoria');
+    }
+    // Email uniqueness
     const existing = await this.userModel.findOne({
-      where: { email: dto.email },
+      where: { email: user.email },
     });
     if (existing) {
       throw new BadRequestException('El email ya está registrado');
     }
-    if (!dto.password) {
-      throw new BadRequestException('La contraseña es obligatoria');
-    }
-    // Crear usuario con campos reales de la tabla
-    const user = await this.userModel.create({
-      username: dto.email, // o usa dto.username si lo tienes en el DTO
-      password: dto.password,
-      email: dto.email,
+    // Hash password before storing
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const newUser = await this.userModel.create({
+      username: user.email,
+      password: hashedPassword,
+      email: user.email,
       firstLogin: true,
       steps2: false,
       created_by: internal_user_id,
-    } as any); // Cast para evitar error de tipado estricto
-    // Crear cliente asociado (requiere id del usuario)
-    const client = this.clientModel.build({ id_user: user.id });
-    await client.save();
-    // Crear admin si es tipo admin
-    if (dto.id_admin_type === 1) {
-      const admin = this.adminModel.build({
-        id_user: user.id,
-        id_admin_type: 1,
-      });
-      await admin.save();
-    }
-    // Crear profile
-    const profile = this.profileModel.build({
-      id_user: user.id,
-      firstname: dto.firstname,
-      lastname: dto.lastname,
-      id_gender: dto.id_gender,
-      id_country: dto.id_country,
-      phone: dto.phone,
-      identification: dto.identification,
-      address: '',
-      image: '',
-    });
-    await profile.save();
+    } as any);
+    // Admin row (defaults to standard admin type when not provided)
+    await this.adminModel.create({
+      id_user: newUser.id,
+      id_admin_type: id_admin_type ?? 2,
+    } as any);
+    // Profile row
+    await this.profileModel.create({
+      id_user: newUser.id,
+      firstname: profile.firstname,
+      lastname: profile.lastname,
+      id_gender: profile.id_gender,
+      id_country: profile.id_country,
+      phone: profile.phone,
+      identification: profile.identification,
+      address: profile.address || '',
+      image: profile.image || '',
+    } as any);
     await this.jobsService.addJob({
       type: 'sendEmail',
       data: {
-        to: user.email,
+        to: newUser.email,
         subject: 'Bienvenido a la plataforma',
-        html: `<p>Hola ${dto.firstname}, tu usuario ha sido creado correctamente.</p>`,
+        html: `<p>Hola ${profile.firstname}, tu usuario administrador ha sido creado correctamente.</p>`,
       },
     });
-    return user;
+    return {
+      title: 'Operación Exitosa',
+      message: 'El administrador ha sido creado.',
+      id_user: newUser.id,
+    };
   }
 
   async update(internal_user_id: number, dto: UpdateUserDto): Promise<any> {
-    const user = await this.userModel.findByPk(internal_user_id);
+    const id_user = dto?.user?.id;
+    if (!id_user) throw new BadRequestException('Usuario no especificado');
+    const user = await this.userModel.findByPk(id_user);
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const updatedUser = await user.update({
-      email: dto.email,
-    } as any);
 
-    const profile = await this.profileModel.findOne({
-      where: { id_user: internal_user_id },
-    });
-    if (profile) {
-      await profile.update({
-        firstname: dto.firstname,
-        lastname: dto.lastname,
-        id_gender: dto.id_gender,
-        id_country: dto.id_country,
-        phone: dto.phone,
-        identification: dto.identification,
-        updated_at: new Date(),
-      });
+    if (dto.user?.email) {
+      await user.update({ email: dto.user.email } as any);
     }
-    const admin = await this.adminModel.findByPk(internal_user_id);
-    if (admin && dto.id_admin_type) {
-      await admin.update({ id_admin_type: dto.id_admin_type });
+
+    if (dto.profile) {
+      await this.profileModel.update(
+        {
+          firstname: dto.profile.firstname,
+          lastname: dto.profile.lastname,
+          id_gender: dto.profile.id_gender,
+          id_country: dto.profile.id_country,
+          phone: dto.profile.phone,
+          identification: dto.profile.identification,
+          address: dto.profile.address,
+          updated_at: new Date(),
+        },
+        { where: { id_user } },
+      );
     }
+
+    if (dto.id_admin_type) {
+      const admin = await this.adminModel.findByPk(id_user);
+      if (admin) await admin.update({ id_admin_type: dto.id_admin_type });
+    }
+
     return {
       title: 'Operación Exitosa',
-      message: 'Su perfil ha sido actualizado.',
+      message: 'El administrador ha sido actualizado.',
     };
   }
 
@@ -141,28 +211,21 @@ export class UsersService {
   ): Promise<{ message: string }> {
     const user = await this.userModel.findByPk(dto.id_user);
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    // Ajustar campo de soft delete según entidad (disabledAt)
+    // Soft delete on user
     await user.update({ disabledAt: new Date(), disabledBy: internal_user_id });
-    // Soft delete en client
-    const client = await this.clientModel.findByPk(user.id);
-    if (client)
-      await client.update({
-        deleted_at: new Date(),
-        deleted_by: internal_user_id,
-      });
-    // Soft delete en admin
+    // Soft delete on admin row
     const admin = await this.adminModel.findByPk(user.id);
     if (admin)
       await admin.update({
         deleted_at: new Date(),
         deleted_by: internal_user_id,
       });
-    // Soft delete en profile (solo updated_at)
+    // Touch profile
     const profile = await this.profileModel.findOne({
       where: { id_user: user.id },
     });
     if (profile) await profile.update({ updated_at: new Date() });
-    return { message: 'Usuario eliminado' };
+    return { message: 'Administrador eliminado' };
   }
 
   async setEnableUser(
@@ -172,26 +235,35 @@ export class UsersService {
     const admin = await this.adminModel.findByPk(dto.id_user);
     if (!admin) throw new NotFoundException('Admin no encontrado');
     await admin.update({
-      disabled_at: dto.enable ? undefined : new Date(),
-      disabled_by: internal_user_id,
-    });
+      disabled_at: dto.enable ? null : new Date(),
+      disabled_by: dto.enable ? null : internal_user_id,
+    } as any);
     return {
       message: `Usuario ${dto.enable ? 'habilitado' : 'deshabilitado'}`,
     };
   }
 
-  async setUserAdmin(id_user: number): Promise<{ message: string }> {
-    const exists = await this.adminModel.findByPk(id_user);
-    if (exists) return { message: 'Ya es admin' };
-    await this.adminModel.create({ id_user, id_admin_type: 1 } as any);
-    return { message: 'Usuario convertido a admin' };
-  }
-
-  async setUserClient(id_user: number): Promise<{ message: string }> {
-    const exists = await this.clientModel.findByPk(id_user);
-    if (exists) return { message: 'Ya es client' };
-    await this.clientModel.create({ id_user } as any);
-    return { message: 'Usuario convertido a client' };
+  async setUserStatus(
+    internal_user_id: number,
+    body: UpdateUserStatusDto,
+  ): Promise<any> {
+    if (
+      !body ||
+      typeof body.id !== 'number' ||
+      typeof body.enable !== 'boolean'
+    ) {
+      throw new BadRequestException('Datos incompletos.');
+    }
+    const admin = await this.adminModel.findByPk(body.id);
+    if (!admin) throw new NotFoundException('Admin no encontrado');
+    await admin.update({
+      disabled_at: body.enable ? null : new Date(),
+      disabled_by: body.enable ? null : internal_user_id,
+    } as any);
+    return {
+      title: 'Operación Exitosa',
+      message: `El administrador ha sido ${body.enable ? 'Habilitado' : 'Deshabilitado'}.`,
+    };
   }
 
   /**
@@ -270,10 +342,8 @@ export class UsersService {
 
   async getUserAccesses(id_user: number): Promise<any> {
     const admin = await this.adminModel.findByPk(id_user);
-    const client = await this.clientModel.findByPk(id_user);
     return {
       admin: !!admin,
-      client: !!client,
     };
   }
 }

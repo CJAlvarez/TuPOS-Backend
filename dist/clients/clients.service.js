@@ -53,19 +53,22 @@ let ClientsService = class ClientsService {
                 this.sequelize.literal(`MATCH(profile.firstname, profile.lastname) AGAINST('${search_word.trim().replace(/'/g, "''")}' IN BOOLEAN MODE)`),
             ];
         }
+        const include = [
+            {
+                model: user_entity_1.User,
+                as: 'user',
+                required: true,
+                attributes: { exclude: ['password', 'restoreCode'] },
+            },
+            { model: profile_entity_1.Profile, as: 'profile', required: true },
+        ];
         const total = await this.clientModel.count({
-            include: [
-                { model: user_entity_1.User, as: 'user', required: true },
-                { model: profile_entity_1.Profile, as: 'profile', required: true },
-            ],
+            include,
             where,
         });
         const paginate = this.utilsService.paginate(limit, skip, total, false);
         const rows = await this.clientModel.findAll({
-            include: [
-                { model: user_entity_1.User, as: 'user', required: true },
-                { model: profile_entity_1.Profile, as: 'profile', required: true },
-            ],
+            include,
             where,
             limit: paginate.limit,
             offset: paginate.offset,
@@ -87,7 +90,12 @@ let ClientsService = class ClientsService {
         const client = await this.clientModel.findOne({
             where,
             include: [
-                { model: this.userModel, as: 'user', required: true },
+                {
+                    model: this.userModel,
+                    as: 'user',
+                    required: true,
+                    attributes: { exclude: ['password', 'restoreCode'] },
+                },
                 { model: this.profileModel, as: 'profile', required: true },
             ],
         });

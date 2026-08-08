@@ -4,6 +4,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const swagger_1 = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const files_paths_1 = require("./utils/files.paths");
 function setupRailwayAutoShutdown() {
     if (!process.env.RAILWAY_ENVIRONMENT_NAME) {
         return;
@@ -24,6 +25,7 @@ function setupRailwayAutoShutdown() {
 async function bootstrap() {
     setupRailwayAutoShutdown();
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useStaticAssets(files_paths_1.FILES_ROOT, { prefix: files_paths_1.FILES_ROUTE_PREFIX });
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
         transformOptions: {

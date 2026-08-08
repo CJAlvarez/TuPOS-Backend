@@ -14,7 +14,14 @@ const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class FirstLoginDto {
     password;
+    confirm;
     confirmPassword;
+    firstname;
+    lastname;
+    gender;
+    phone;
+    src;
+    email;
 }
 exports.FirstLoginDto = FirstLoginDto;
 __decorate([
@@ -25,10 +32,64 @@ __decorate([
     __metadata("design:type", String)
 ], FirstLoginDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Confirmar nueva contraseña' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Confirmación de la nueva contraseña. Nombre de campo usado por el frontend.',
+    }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(6),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "confirm", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Confirmación de la nueva contraseña. Alias aceptado para clientes que no usan "confirm".',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], FirstLoginDto.prototype, "confirmPassword", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Nombres del perfil' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "firstname", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Apellidos del perfil' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "lastname", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Identificador del género. Llega como texto en multipart.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "gender", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Teléfono del perfil' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(30),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Vista previa del avatar. Puede ser un data URL o el nombre de un recurso por defecto.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "src", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Correo del usuario. Se acepta por compatibilidad con el formulario, pero no se modifica.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], FirstLoginDto.prototype, "email", void 0);
 //# sourceMappingURL=first-login.dto.js.map

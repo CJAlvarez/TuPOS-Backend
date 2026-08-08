@@ -1,6 +1,6 @@
 {
   "name": "tupos-backend",
-  "version": "26.0.5",
+  "version": "26.1.1",
   "description": "",
   "author": {
     "name": "CJ Alvarez",
@@ -95,6 +95,9 @@
     ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
