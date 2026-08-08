@@ -12,8 +12,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { EnableUserDto } from './dto/enable-user.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
-import { GetUsersQueryDto } from './dto/get-users-query.dto';
-import { Op } from 'sequelize';
+import {
+  GetUsersQueryDto,
+  UsersOrderableColumn,
+} from './dto/get-users-query.dto';
+import { Op, Order, OrderItem } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { UtilsService } from 'src/utils/utils.service';
 import * as bcrypt from 'bcrypt';
@@ -36,9 +39,10 @@ export class UsersService {
   async findAll(
     query: GetUsersQueryDto,
   ): Promise<{ count: number; list: any[]; skip: number }> {
-    const { search_word, limit = 10, skip = 0 } = query;
+    const { search_word, limit = 10, skip = 0, order_by, order_asc } = query;
 
     const where: any = {};
+    where.deleted_at = { [Op.is]: null };
     if (search_word) {
       where[Op.or] = [
         { '$profile.identification$': { [Op.like]: `%${search_word}%` } },
@@ -57,7 +61,7 @@ export class UsersService {
         model: User,
         as: 'user',
         required: true,
-        attributes: { exclude: ['password'] },
+        attributes: { exclude: ['password', 'restoreCode'] },
       },
       { model: Profile, as: 'profile', required: true },
     ];
@@ -67,6 +71,7 @@ export class UsersService {
     const rows = await this.adminModel.findAll({
       include,
       where,
+      order: this.buildOrder(order_by, order_asc),
       limit: paginate.limit,
       offset: paginate.offset,
     });
@@ -76,6 +81,36 @@ export class UsersService {
       list: rows.map((row) => row.toJSON()),
       skip: paginate.skip,
     };
+  }
+
+  /**
+   * Translates the allow-listed order_by key into a Sequelize order option.
+   * Associated columns need the include reference form, plain columns do not.
+   * Defaults to profile name so pagination stays stable across pages.
+   */
+  private buildOrder(
+    order_by?: UsersOrderableColumn,
+    order_asc?: boolean,
+  ): Order {
+    const dir = order_asc ? 'ASC' : 'DESC';
+    const profile = { model: Profile, as: 'profile' };
+    const user = { model: User, as: 'user' };
+
+    const columns: Record<UsersOrderableColumn, OrderItem> = {
+      'profile.firstname': [profile, 'firstname', dir],
+      'profile.lastname': [profile, 'lastname', dir],
+      'profile.phone': [profile, 'phone', dir],
+      'user.email': [user, 'email', dir],
+      id_admin_type: ['id_admin_type', dir],
+      disabled_at: ['disabled_at', dir],
+    };
+
+    if (order_by && columns[order_by]) return [columns[order_by]];
+
+    return [
+      [profile, 'firstname', 'ASC'],
+      [profile, 'lastname', 'ASC'],
+    ];
   }
 
   async create(internal_user_id: any, dto: CreateUserDto): Promise<any> {

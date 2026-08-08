@@ -41,19 +41,23 @@ export class ClientsService {
       ];
     }
 
+    const include = [
+      {
+        model: User,
+        as: 'user',
+        required: true,
+        attributes: { exclude: ['password', 'restoreCode'] },
+      },
+      { model: Profile, as: 'profile', required: true },
+    ];
+
     const total = await this.clientModel.count({
-      include: [
-        { model: User, as: 'user', required: true },
-        { model: Profile, as: 'profile', required: true },
-      ],
+      include,
       where,
     });
     const paginate = this.utilsService.paginate(limit, skip, total, false);
     const rows = await this.clientModel.findAll({
-      include: [
-        { model: User, as: 'user', required: true },
-        { model: Profile, as: 'profile', required: true },
-      ],
+      include,
       where,
       limit: paginate.limit,
       offset: paginate.offset,
@@ -77,7 +81,12 @@ export class ClientsService {
     const client = await this.clientModel.findOne({
       where,
       include: [
-        { model: this.userModel, as: 'user', required: true },
+        {
+          model: this.userModel,
+          as: 'user',
+          required: true,
+          attributes: { exclude: ['password', 'restoreCode'] },
+        },
         { model: this.profileModel, as: 'profile', required: true },
       ],
     });
