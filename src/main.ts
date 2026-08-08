@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { FILES_ROOT, FILES_ROUTE_PREFIX } from './utils/files.paths';
 
 /**
  * Gestiona el tiempo de actividad del contenedor en Railway
@@ -38,7 +40,11 @@ async function bootstrap() {
   // Configurar auto-apagado en Railway antes de crear la app
   setupRailwayAutoShutdown();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Archivos generados por usuarios (avatares, etc.). Se sirven fuera del
+  // prefijo /api porque el frontend los resuelve como /files/<carpeta>/<nombre>.
+  app.useStaticAssets(FILES_ROOT, { prefix: FILES_ROUTE_PREFIX });
 
   // Configurar pipes de validación globales
   app.useGlobalPipes(new ValidationPipe({

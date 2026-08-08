@@ -4,8 +4,12 @@ import {
   Post,
   Body,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
   Request,
 } from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -15,6 +19,7 @@ import { FirstLoginDto } from './dto/first-login.dto';
 import { VerifyDisabledUserGuard } from './guards/verify-disabled-user.guard';
 import { VerifyAdminAdminGuard } from './guards/verify-admin-admin.guard';
 import { VerifyTokenGuard } from './guards/verify-token.guard';
+import { UploadedFile } from './types/uploaded-file.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -56,10 +61,19 @@ export class AuthController {
     return this.authService.resetPassword(dto);
   }
 
+  // The first-login form is submitted as multipart/form-data (it may carry an
+  // avatar file), so the request needs a multipart parser before @Body() can be
+  // populated. AnyFilesInterceptor is a no-op for application/json payloads.
   @Post('first-login')
   @UseGuards(VerifyTokenGuard)
-  firstLogin(@Request() req, @Body() dto: FirstLoginDto) {
-    return this.authService.firstLogin(req.internal_user_id, dto);
+  @UseInterceptors(AnyFilesInterceptor())
+  @ApiConsumes('multipart/form-data', 'application/json')
+  firstLogin(
+    @Request() req,
+    @Body() dto: FirstLoginDto,
+    @UploadedFiles() files?: UploadedFile[],
+  ) {
+    return this.authService.firstLogin(req.internal_user_id, dto, files?.[0]);
   }
 
   // Agrega más endpoints según la lógica original
