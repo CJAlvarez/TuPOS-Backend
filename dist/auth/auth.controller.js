@@ -14,6 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const swagger_1 = require("@nestjs/swagger");
 const auth_service_1 = require("./auth.service");
 const login_dto_1 = require("./dto/login.dto");
 const change_password_dto_1 = require("./dto/change-password.dto");
@@ -46,8 +48,8 @@ let AuthController = class AuthController {
     resetPassword(dto) {
         return this.authService.resetPassword(dto);
     }
-    firstLogin(req, dto) {
-        return this.authService.firstLogin(req.internal_user_id, dto);
+    firstLogin(req, dto, files) {
+        return this.authService.firstLogin(req.internal_user_id, dto, files?.[0]);
     }
 };
 exports.AuthController = AuthController;
@@ -100,10 +102,13 @@ __decorate([
 __decorate([
     (0, common_1.Post)('first-login'),
     (0, common_1.UseGuards)(verify_token_guard_1.VerifyTokenGuard),
+    (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)()),
+    (0, swagger_1.ApiConsumes)('multipart/form-data', 'application/json'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFiles)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, first_login_dto_1.FirstLoginDto]),
+    __metadata("design:paramtypes", [Object, first_login_dto_1.FirstLoginDto, Array]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "firstLogin", null);
 exports.AuthController = AuthController = __decorate([

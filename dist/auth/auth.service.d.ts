@@ -8,6 +8,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { RecoverPasswordDto } from './dto/recover-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { FirstLoginDto } from './dto/first-login.dto';
+import { UploadedFile } from './types/uploaded-file.interface';
 import { JobsService } from 'src/jobs/jobs.service';
 export declare class AuthService {
     private readonly jwtService;
@@ -23,5 +24,7 @@ export declare class AuthService {
     changePassword(internal_user_id: any, dto: ChangePasswordDto): Promise<any>;
     recoverPassword(dto: RecoverPasswordDto): Promise<any>;
     resetPassword(dto: ResetPasswordDto): Promise<any>;
-    firstLogin(internal_user_id: any, dto: FirstLoginDto): Promise<any>;
+    firstLogin(internal_user_id: any, dto: FirstLoginDto, avatar?: UploadedFile): Promise<any>;
+    private saveFirstLoginProfile;
+    private storeProfileImage;
 }

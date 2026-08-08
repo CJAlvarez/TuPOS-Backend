@@ -39,8 +39,9 @@ let UsersService = class UsersService {
         this.sequelize = sequelize;
     }
     async findAll(query) {
-        const { search_word, limit = 10, skip = 0 } = query;
+        const { search_word, limit = 10, skip = 0, order_by, order_asc } = query;
         const where = {};
+        where.deleted_at = { [sequelize_2.Op.is]: null };
         if (search_word) {
             where[sequelize_2.Op.or] = [
                 { '$profile.identification$': { [sequelize_2.Op.like]: `%${search_word}%` } },
@@ -56,7 +57,7 @@ let UsersService = class UsersService {
                 model: user_entity_1.User,
                 as: 'user',
                 required: true,
-                attributes: { exclude: ['password'] },
+                attributes: { exclude: ['password', 'restoreCode'] },
             },
             { model: profile_entity_1.Profile, as: 'profile', required: true },
         ];
@@ -65,6 +66,7 @@ let UsersService = class UsersService {
         const rows = await this.adminModel.findAll({
             include,
             where,
+            order: this.buildOrder(order_by, order_asc),
             limit: paginate.limit,
             offset: paginate.offset,
         });
@@ -73,6 +75,25 @@ let UsersService = class UsersService {
             list: rows.map((row) => row.toJSON()),
             skip: paginate.skip,
         };
+    }
+    buildOrder(order_by, order_asc) {
+        const dir = order_asc ? 'ASC' : 'DESC';
+        const profile = { model: profile_entity_1.Profile, as: 'profile' };
+        const user = { model: user_entity_1.User, as: 'user' };
+        const columns = {
+            'profile.firstname': [profile, 'firstname', dir],
+            'profile.lastname': [profile, 'lastname', dir],
+            'profile.phone': [profile, 'phone', dir],
+            'user.email': [user, 'email', dir],
+            id_admin_type: ['id_admin_type', dir],
+            disabled_at: ['disabled_at', dir],
+        };
+        if (order_by && columns[order_by])
+            return [columns[order_by]];
+        return [
+            [profile, 'firstname', 'ASC'],
+            [profile, 'lastname', 'ASC'],
+        ];
     }
     async create(internal_user_id, dto) {
         const { user, profile, id_admin_type } = dto;

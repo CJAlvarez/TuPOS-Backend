@@ -23,6 +23,7 @@ export declare class UsersService {
         list: any[];
         skip: number;
     }>;
+    private buildOrder;
     create(internal_user_id: any, dto: CreateUserDto): Promise<any>;
     update(internal_user_id: number, dto: UpdateUserDto): Promise<any>;
     remove(internal_user_id: any, dto: DeleteUserDto): Promise<{

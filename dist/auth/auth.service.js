@@ -21,8 +21,11 @@ const profile_entity_1 = require("../entities/profile.entity");
 const admin_entity_1 = require("../entities/admin.entity");
 const store_entity_1 = require("../entities/store.entity");
 const bcrypt = require("bcrypt");
+const files_paths_1 = require("../utils/files.paths");
 const sequelize_2 = require("sequelize");
 const jobs_service_1 = require("../jobs/jobs.service");
+const fs_1 = require("fs");
+const path_1 = require("path");
 let AuthService = class AuthService {
     jwtService;
     userModel;
@@ -209,21 +212,128 @@ let AuthService = class AuthService {
             code: 'reset_password',
         };
     }
-    async firstLogin(internal_user_id, dto) {
+    async firstLogin(internal_user_id, dto, avatar) {
         const dbUser = await this.userModel.findByPk(internal_user_id);
         if (!dbUser)
-            throw new common_1.NotFoundException('Usuario no encontrado');
-        if (dto.password !== dto.confirmPassword) {
-            throw new common_1.BadRequestException('Las contraseñas no coinciden');
-        }
-        if (dbUser.firstLogin === false) {
-            throw new common_1.BadRequestException('El usuario ya realizó el primer login');
-        }
+            throw new common_1.NotFoundException({
+                title: 'Usuario no encontrado',
+                message: 'La sesión no corresponde a un usuario válido.',
+                status: 404,
+                code: 'user',
+            });
+        const confirmation = dto.confirm ?? dto.confirmPassword;
+        if (!confirmation)
+            throw new common_1.BadRequestException({
+                title: 'Confirmación requerida',
+                message: 'Debes confirmar la nueva contraseña.',
+                status: 400,
+                code: 'confirm',
+            });
+        if (dto.password !== confirmation)
+            throw new common_1.BadRequestException({
+                title: 'Las contraseñas no coinciden',
+                message: 'Verifica la nueva contraseña y su confirmación.',
+                status: 400,
+                code: 'password',
+            });
+        if (dbUser.firstLogin === false)
+            throw new common_1.BadRequestException({
+                title: 'Primer inicio ya completado',
+                message: 'Este usuario ya realizó su primer inicio de sesión.',
+                status: 400,
+                code: 'first_login',
+            });
         const newHash = await bcrypt.hash(dto.password, 10);
-        dbUser.password = newHash;
-        dbUser.firstLogin = false;
+        dbUser.set({ password: newHash, firstLogin: false });
         await dbUser.save();
-        return { message: 'Contraseña establecida correctamente en primer login' };
+        const profile = await this.saveFirstLoginProfile(Number(dbUser.getDataValue('id')), dto, avatar);
+        const user = dbUser.toJSON();
+        return {
+            token: this.jwtService.sign({
+                username: user.username,
+                id_user: user.id,
+                name: profile?.firstname ?? null,
+            }),
+            first_login: false,
+            id: user.id,
+        };
+    }
+    async saveFirstLoginProfile(id_user, dto, avatar) {
+        const changes = {};
+        const firstname = dto.firstname?.trim();
+        if (firstname)
+            changes.firstname = firstname;
+        const lastname = dto.lastname?.trim();
+        if (lastname)
+            changes.lastname = lastname;
+        const phone = dto.phone?.trim();
+        if (phone)
+            changes.phone = phone;
+        const id_gender = Number.parseInt(dto.gender ?? '', 10);
+        if (Number.isFinite(id_gender))
+            changes.id_gender = id_gender;
+        const image = await this.storeProfileImage(id_user, dto.src, avatar);
+        if (image)
+            changes.image = image;
+        let profile = await this.profileModel.findOne({ where: { id_user } });
+        if (!profile) {
+            profile = await this.profileModel.create({
+                id_user,
+                firstname: changes.firstname ?? '',
+                lastname: changes.lastname ?? '',
+                id_gender: changes.id_gender ?? null,
+                phone: changes.phone ?? '',
+                image: changes.image ?? '',
+            });
+            return profile;
+        }
+        if (Object.keys(changes).length) {
+            changes.updated_at = new Date();
+            await profile.update(changes);
+        }
+        return profile;
+    }
+    async storeProfileImage(id_user, src, avatar) {
+        const MAX_BYTES = 2 * 1024 * 1024;
+        let buffer = null;
+        let extension = '';
+        if (avatar?.buffer?.length) {
+            if (!avatar.mimetype?.startsWith('image/')) {
+                throw new common_1.BadRequestException({
+                    title: 'Archivo no válido',
+                    message: 'La foto de perfil debe ser una imagen.',
+                    status: 400,
+                    code: 'image',
+                });
+            }
+            buffer = avatar.buffer;
+            extension =
+                (0, path_1.extname)(avatar.originalname ?? '').toLowerCase() ||
+                    `.${avatar.mimetype.split('/')[1]}`;
+        }
+        else if (src?.startsWith('data:image/')) {
+            const match = /^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/.exec(src);
+            if (!match)
+                return null;
+            buffer = Buffer.from(match[2], 'base64');
+            extension = `.${match[1]}`;
+        }
+        else {
+            const plain = src?.trim();
+            return plain ? plain : null;
+        }
+        if (buffer.length > MAX_BYTES) {
+            throw new common_1.BadRequestException({
+                title: 'Archivo demasiado grande',
+                message: 'La foto de perfil no puede superar los 2 MB.',
+                status: 400,
+                code: 'image',
+            });
+        }
+        const filename = `profile-${id_user}-${Date.now()}${extension}`;
+        await fs_1.promises.mkdir(files_paths_1.PROFILE_IMAGES_DIR, { recursive: true });
+        await fs_1.promises.writeFile((0, path_1.join)(files_paths_1.PROFILE_IMAGES_DIR, filename), buffer);
+        return filename;
     }
 };
 exports.AuthService = AuthService;

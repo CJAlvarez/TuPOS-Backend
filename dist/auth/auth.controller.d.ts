@@ -4,6 +4,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { RecoverPasswordDto } from './dto/recover-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { FirstLoginDto } from './dto/first-login.dto';
+import { UploadedFile } from './types/uploaded-file.interface';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -13,5 +14,5 @@ export declare class AuthController {
     changePassword(req: any, dto: ChangePasswordDto): Promise<any>;
     recoverPassword(dto: RecoverPasswordDto): Promise<any>;
     resetPassword(dto: ResetPasswordDto): Promise<any>;
-    firstLogin(req: any, dto: FirstLoginDto): Promise<any>;
+    firstLogin(req: any, dto: FirstLoginDto, files?: UploadedFile[]): Promise<any>;
 }

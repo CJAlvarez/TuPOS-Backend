@@ -9,13 +9,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetUsersQueryDto = void 0;
+exports.GetUsersQueryDto = exports.USERS_ORDERABLE_COLUMNS = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+exports.USERS_ORDERABLE_COLUMNS = [
+    'profile.firstname',
+    'profile.lastname',
+    'profile.phone',
+    'user.email',
+    'id_admin_type',
+    'disabled_at',
+];
 class GetUsersQueryDto {
     search_word;
     skip = 0;
     limit = 10;
+    order_by;
+    order_asc;
 }
 exports.GetUsersQueryDto = GetUsersQueryDto;
 __decorate([
@@ -37,4 +47,15 @@ __decorate([
     (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], GetUsersQueryDto.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(exports.USERS_ORDERABLE_COLUMNS),
+    __metadata("design:type", String)
+], GetUsersQueryDto.prototype, "order_by", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ obj }) => obj.order_asc === true || obj.order_asc === 'true'),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], GetUsersQueryDto.prototype, "order_asc", void 0);
 //# sourceMappingURL=get-users-query.dto.js.map
