@@ -56,3 +56,53 @@ export function readOwnVersion(): string {
   );
   return UNKNOWN_VERSION;
 }
+
+/**
+ * `'26.10.1'` → `[26, 10, 1]`, or `null` when the input is not a version this
+ * project produces.
+ *
+ * Deliberately strict. An empty string, `undefined`, a proxy's error page or a
+ * future `'26.3.0-rc.1'` all return `null`, and every caller treats `null` as
+ * "not comparable" and does not block.
+ */
+export function parseVersion(value: unknown): number[] | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!VERSION_PATTERN.test(trimmed)) return null;
+  return trimmed.split('.').map((part) => Number(part));
+}
+
+/**
+ * Compares two versions segment by segment, NUMERICALLY. Missing segments count
+ * as 0, so `'26.2'` and `'26.2.0'` are equal.
+ *
+ * Numerically and not as text: `'26.10.0'` is GREATER than `'26.9.9'`, which is
+ * exactly what a string comparison gets wrong — and whether a client is refused
+ * depends on this answer.
+ *
+ * @returns -1, 0 or 1, or `null` when either side is not comparable.
+ */
+export function compareVersions(a: unknown, b: unknown): -1 | 0 | 1 | null {
+  const left = parseVersion(a);
+  const right = parseVersion(b);
+  if (!left || !right) return null;
+
+  const length = Math.max(left.length, right.length);
+  for (let i = 0; i < length; i++) {
+    const delta = (left[i] ?? 0) - (right[i] ?? 0);
+    if (delta !== 0) return delta < 0 ? -1 : 1;
+  }
+
+  return 0;
+}
+
+/**
+ * `true` only when `client` is DEMONSTRABLY older than `required`.
+ *
+ * Any doubt — either side missing, or in a format we do not recognize —
+ * returns `false`. This is the predicate that can refuse a real till, so its
+ * default answer is "do not refuse".
+ */
+export function isBehind(client: unknown, required: unknown): boolean {
+  return compareVersions(client, required) === -1;
+}

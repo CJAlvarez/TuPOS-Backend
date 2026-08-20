@@ -2,6 +2,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { SkipAppKey } from '../guards/skip-app-key.decorator';
+import { SkipVersionFloor } from '../guards/skip-version-floor.decorator';
 import { AppVersionInfo, AppVersionService } from './app-version.service';
 
 /**
@@ -24,6 +25,9 @@ export class AppVersionController {
 
   @Get()
   @SkipAppKey()
+  // Un cliente por debajo del piso TIENE que poder leer esta ruta: es la única
+  // forma de que descubra cuál es la versión mínima y salga del bloqueo.
+  @SkipVersionFloor()
   @UseGuards(ThrottlerGuard)
   // 60/min per address rather than passbooks' 20: a whole branch NATs out
   // through a single IP and every machine starts at the same hour, so a lower

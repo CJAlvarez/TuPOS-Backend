@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppKeyGuard } from './guards/app-key.guard';
 import { AppVersionModule } from './app-version/app-version.module';
+import { AppVersionFloorGuard } from './guards/app-version-floor.guard';
 import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
 import { AuthModule } from './auth/auth.module';
@@ -111,6 +112,10 @@ import { StoreModule } from './store/store.module';
     {
       provide: APP_GUARD,
       useClass: AppKeyGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AppVersionFloorGuard,
     },
   ],
 })
