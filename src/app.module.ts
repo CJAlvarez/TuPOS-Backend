@@ -7,6 +7,7 @@ import { Dialect } from 'sequelize';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppKeyGuard } from './guards/app-key.guard';
+import { AppVersionModule } from './app-version/app-version.module';
 import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
 import { AuthModule } from './auth/auth.module';
@@ -58,7 +59,10 @@ import { StoreModule } from './store/store.module';
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_SCHEMA'),
         autoLoadModels: true,
-        synchronize: false, // Cambia a true solo en desarrollo
+        // Nunca se activa por defecto: sincronizar el esquema contra los modelos
+        // reescribiria tablas reales. Se habilita con DB_SYNC=true solo para
+        // levantar una base local vacia desde cero.
+        synchronize: configService.get<string>('DB_SYNC') === 'true',
         models: [User, Profile, Client, Admin, Store, Report],
         timezone: '-06:00',
         logging: configService.get<boolean>('DB_LOGGING', false)
@@ -98,7 +102,8 @@ import { StoreModule } from './store/store.module';
     NotificationModule,
     ReturnsModule,
     ReturnItemsModule,
-    StoreModule
+    StoreModule,
+    AppVersionModule
   ],
   controllers: [AppController],
   providers: [
