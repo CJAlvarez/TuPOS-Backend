@@ -1,6 +1,6 @@
 {
   "name": "tupos-backend",
-  "version": "26.1.1",
+  "version": "26.2.0",
   "description": " - Production Build",
   "author": {
     "name": "CJ Alvarez",
@@ -22,6 +22,7 @@
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/sequelize": "^11.0.0",
     "@nestjs/swagger": "^11.2.0",
+    "@nestjs/throttler": "^6.5.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
