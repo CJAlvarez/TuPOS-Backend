@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run start:dev          # Dev server with file-watch (port 8000)
+npm run dev                # Dev server with file-watch (port 8000)
 npm run build              # Compile TypeScript via NestJS CLI (SWC)
 npm run build:prod         # Build + create deployable dist package
 npm run lint               # ESLint with auto-fix
