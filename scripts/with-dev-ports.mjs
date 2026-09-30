@@ -1,7 +1,9 @@
 // Runs a command with the ports/origins assigned by Dev-Ports-Admin.
 // Usage: node scripts/with-dev-ports.mjs nest start --watch
 import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { constants } from 'node:os';
+import { parseEnv } from 'node:util';
 
 const ENV_FILE = '.dev-ports.env';
 
@@ -25,6 +27,41 @@ process.env.PORT = DEV_PORTS_API_PORT;
 process.env.FRONTEND_URL = DEV_PORTS_ROOT_ORIGIN;
 // The ingress reaches the app over loopback; do not expose it on the LAN.
 process.env.LISTEN_HOST = '127.0.0.1';
+
+// Shared infra ports (Dev-Ports-Admin `infra`). Optional: nothing changes
+// while the variables are absent from `.dev-ports.env`.
+// The app only loads .env after this wrapper, so read it here (without touching
+// process.env) to tell whether the backend targets a local database. The real
+// environment wins over the file, like ConfigModule.
+const APP_ENV_FILES = ['.env'];
+
+function effectiveEnv(name) {
+  if (process.env[name] !== undefined) return process.env[name];
+  for (const file of APP_ENV_FILES) {
+    try {
+      const value = parseEnv(readFileSync(file, 'utf8'))[name];
+      if (value !== undefined) return value;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+  return undefined;
+}
+
+function isLocalHost(host) {
+  return !host || ['localhost', '127.0.0.1', '::1'].includes(host.trim().toLowerCase());
+}
+
+function mapInfraPort(target, source) {
+  console.error(`dev-ports: ${target} <- ${source} (${process.env[source]})`);
+}
+
+const { DEV_PORTS_INFRA_MYSQL_PORT } = process.env;
+// Never redirect a remote database (Railway, etc.) to the local container.
+if (DEV_PORTS_INFRA_MYSQL_PORT && isLocalHost(effectiveEnv('DB_HOST'))) {
+  process.env.DB_PORT = DEV_PORTS_INFRA_MYSQL_PORT;
+  mapInfraPort('DB_PORT', 'DEV_PORTS_INFRA_MYSQL_PORT');
+}
 
 const [command, ...args] = process.argv.slice(2);
 if (!command) {
