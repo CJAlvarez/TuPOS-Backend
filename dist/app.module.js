@@ -15,6 +15,8 @@ const core_1 = require("@nestjs/core");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const app_key_guard_1 = require("./guards/app-key.guard");
+const app_version_module_1 = require("./app-version/app-version.module");
+const app_version_floor_guard_1 = require("./guards/app-version-floor.guard");
 const user_entity_1 = require("./entities/user.entity");
 const profile_entity_1 = require("./entities/profile.entity");
 const auth_module_1 = require("./auth/auth.module");
@@ -69,7 +71,7 @@ exports.AppModule = AppModule = __decorate([
                     password: configService.get('DB_PASS'),
                     database: configService.get('DB_SCHEMA'),
                     autoLoadModels: true,
-                    synchronize: false,
+                    synchronize: configService.get('DB_SYNC') === 'true',
                     models: [user_entity_1.User, profile_entity_1.Profile, client_entity_1.Client, admin_entity_1.Admin, store_entity_1.Store, report_entity_1.Report],
                     timezone: '-06:00',
                     logging: configService.get('DB_LOGGING', false)
@@ -109,7 +111,8 @@ exports.AppModule = AppModule = __decorate([
             notification_module_1.NotificationModule,
             returns_module_1.ReturnsModule,
             return_items_module_1.ReturnItemsModule,
-            store_module_1.StoreModule
+            store_module_1.StoreModule,
+            app_version_module_1.AppVersionModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -117,6 +120,10 @@ exports.AppModule = AppModule = __decorate([
             {
                 provide: core_1.APP_GUARD,
                 useClass: app_key_guard_1.AppKeyGuard,
+            },
+            {
+                provide: core_1.APP_GUARD,
+                useClass: app_version_floor_guard_1.AppVersionFloorGuard,
             },
         ],
     })

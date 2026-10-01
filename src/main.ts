@@ -59,7 +59,7 @@ async function bootstrap() {
     origin: true,
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-app-key',
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-app-key, x-app-version',
     exposedHeaders: 'Authorization',
   });
 
@@ -101,6 +101,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('ULMXYusjhyJhN7nhZc7DrijCMwzztL9rdTP64k2Rppj3vqHbz3ZaecvZP9YosM3FnznRF7i7ZfJJaZrUiKJN3ompHgR4NvCk9PXG', app, document);
 
-  await app.listen(process.env.PORT ?? 8000);
+  // LISTEN_HOST is set by scripts/with-dev-ports.mjs; unset keeps the default bind.
+  const port = process.env.PORT ?? 8000;
+  const host = process.env.LISTEN_HOST;
+  await (host ? app.listen(port, host) : app.listen(port));
 }
 bootstrap();

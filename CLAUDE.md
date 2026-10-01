@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run start:dev          # Dev server with file-watch (port 8000)
+npm run dev                # Dev server with file-watch (port 8000)
 npm run build              # Compile TypeScript via NestJS CLI (SWC)
 npm run build:prod         # Build + create deployable dist package
 npm run lint               # ESLint with auto-fix
@@ -64,3 +64,26 @@ Modular NestJS 11 backend under `src/`. Every feature has a controller, service,
 ## Environment Variables
 
 `DB_HOST`, `DB_PORT` (default 3306), `DB_USER`, `DB_PASS`, `DB_SCHEMA`, `PORT` (default 8000), `TOKEN_SECRET_KEY`, `LOGIN_TOKEN_SECRET_KEY`, `EMAIL_SERVICE`, `EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`, `FRONTEND_URL`, `P_ADMIN`, `P_PARTNER`, `P_CLIENT`, `ROYALTY_*`, `INVENTORY_DAYS_BEFORE_EXPIRATION`, `ACTIVE_HOURS` (Railway shutdown schedule)
+
+Local development only:
+
+```
+DB_SYNC                  # 'true' lets Sequelize create the schema from the models.
+                         # Defaults to false. Only ever point it at a throwaway
+                         # database: against a real one it rewrites tables.
+```
+
+Admin client update policy, both served by `GET /api/app-version`:
+
+```
+ADMIN_MIN_VERSION        # Lowest admin client version accepted. Defaults to this
+                         # backend's own version. A malformed value is ignored
+                         # (logged) and the default is used.
+ADMIN_UPDATE_MANDATORY   # 'true' blocks admin clients below the floor.
+                         # Compared strictly: 'TRUE', '1' and 'yes' do NOT enable it.
+```
+
+**`ADMIN_UPDATE_MANDATORY=true` can stop every till in the field.** Two rules:
+
+1. Publish the installers and confirm they are downloadable **before** flipping it. `ADMIN_MIN_VERSION` exists so the floor can lag the backend's own version during a staged rollout — deploying a new backend version is a no-op for clients until someone deliberately raises the floor.
+2. Flip it outside business hours. When the block engages mid-session it covers whatever the operator was typing, and that work is lost. That is inherent to "mandatory" and cannot be designed away.
