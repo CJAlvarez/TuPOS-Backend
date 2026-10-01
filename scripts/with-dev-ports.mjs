@@ -83,11 +83,11 @@ function targetsLocalHost(target, hostVar) {
   return true;
 }
 
-const { DEV_PORTS_INFRA_MYSQL_PORT } = process.env;
+const { DEV_PORTS_INFRA_DB_PORT } = process.env;
 // Never redirect a remote database (Railway, etc.) to the local container.
-if (DEV_PORTS_INFRA_MYSQL_PORT && targetsLocalHost('DB_PORT', 'DB_HOST')) {
-  process.env.DB_PORT = DEV_PORTS_INFRA_MYSQL_PORT;
-  mapInfraPort('DB_PORT', 'DEV_PORTS_INFRA_MYSQL_PORT');
+if (DEV_PORTS_INFRA_DB_PORT && targetsLocalHost('DB_PORT', 'DB_HOST')) {
+  process.env.DB_PORT = DEV_PORTS_INFRA_DB_PORT;
+  mapInfraPort('DB_PORT', 'DEV_PORTS_INFRA_DB_PORT');
 }
 
 const [command, ...args] = process.argv.slice(2);
